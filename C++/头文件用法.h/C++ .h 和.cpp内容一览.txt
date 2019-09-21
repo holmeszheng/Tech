@@ -1,0 +1,50 @@
+.h和.cpp都是自解释，所以不能少任何声明。
+.h:全是声明，定义放在cpp里
+#define
+#include
+extern 的声明 （external static变量）
+extern的静态外部函数声明(函数自动是static external)
+extern的const变量的声明，const变量的定义和初始化放在cpp里。
+static internal的静态内部变量的声明和定义（链接性为internal，每个.cpp都有一份copy，各.cpp之间不会communicate）。
+没有模板的类的声明（C++类中都是声明)
+	类中的const变量在constructor的列表中初始化，static变量在.cpp中初始化，const static在类中声明的同时初始化。
+inline函数的声明和定义
+	没有类的模板的类中定义的函数都是inline函数，所以在类外.h文件中也可以定义inline函数。
+有默认值的函数的声明，在定义时还可重复给出默认值，但是发生冲突会报错，只能再次添加（不推荐，会比较难看）
+
+有模板的情况：
+	有模板的意思是不管是general模板类，模板类具体化，还是模板函数都必须在声明或者定义的同时有template<>的前缀，如果没有的话不算有模板的情况。
+模板类的声明和定义
+模板类的具体化形式的声明和定义（模板类有partial specialization和specialization）
+模板函数的声明和定义
+模板函数的具体化形式的声明和定义（模板函数有overloading和specialization）
+模板类中的静态成员的初始化分类：
+
+//.h
+template <typename T>
+class temp
+{
+public:
+    static T m_data;
+};
+
+template <typename T>	//因为有template <typename T>， 所以在.h中定义	(部分具体化的template<typename U> class<double, U> 也是有模板的情况）	
+T temp<T>::m_data = 100;   (属于不完全类型，因为T不是已知）
+
+template<>
+class temp<double>
+{
+public:
+    static double m_data;
+};
+//.cpp
+double temp<double>:: m_data = 1.992;
+//在模板specialization以后，已经是完全类型了，与非模板的情况相同
+//因为没有template<> 存在，所以是static external,不能再.h中定义，否则会生成多次该变量。
+//若是非模板类的静态成员变量，一律.h类内声明，.cpp类外定义初始化。
+
+.cpp：
+除上述之外的所有定义。
+
+namespace:
+	C++的namespace只是把声明和定义圈起来放在了namespace中，不影响所有定义的存储类型。

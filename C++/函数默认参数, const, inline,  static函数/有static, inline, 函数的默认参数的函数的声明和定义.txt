@@ -1,0 +1,106 @@
+inline:
+添加位置：
+	在函数声明或定义中函数返回类型前加上关键字inline即把min（）指定为内联。
+	inline函数的声明和定义必须放在一个.h，定义不能放到.cpp中。
+定义在类声明之中的成员函数将自动地成为内联函数
+
+例如
+
+class A
+
+{
+ public:
+	void Foo(int x, int y) {  } // 在类声明中的函数定义自动地成为内联函数
+
+}
+
+	将成员函数的定义体放在类声明之中虽然能带来书写上的方便，但不是一种良好的编程风格，上例应该改成：
+
+// 头文件
+
+class A
+
+{
+    public:
+
+    void Foo(int x, int y);
+
+}
+
+// 头文件
+
+inline void A::Foo(int x, int y){}
+
+或者：
+
+// 头文件
+
+class A
+
+{
+    public:
+
+    inline void Foo(int x, int y);
+
+}
+
+// 头文件
+void A::Foo(int x, int y){}
+
+
+有默认参数的函数的声明和定义：
+	默认参数在函数声明中提供，当又有声明又有定义时，定义中不能出现默认参数。
+void point（int a=3, int b=5)	//声明
+void point (int a, int b){} //定义(在cpp中）
+	默认参数的应该从右向左。
+
+
+static函数和变量：
+static函数和变量的声明和定义：
+	在声明中给出static，定义中不能写。（在cpp中）
+
+
+static数据成员的定义方法:
+
+
+//.h
+class counter{
+enum {first = 100, end = 200};
+static int count; // 声明：static data member
+const static int county = 2; //声明加定义
+};
+
+//.cpp
+int counter::count=0;// 定义
+
+需要注意的是：
+static数据成员需要在类定义体外部定义。static关键字只能用于类定义体内部的声明中，定义不能标示为static。定义时需初始化。一般static成员不能在类定义体内部初始化，一个例外就是const static数据成员就可以，但该数据成员仍然需要在类外部进行定义。
+在类中使用注意一下几点:
+1.用static可以为类类型的所有对象所共有，像是全局对象，但又被约束在类类型的名字空间中。
+2.可以实施封装，将其放在private或protected区域中。
+3.static成员没有this指针，它不是任何一个对象的组成部分，推荐用“类名::static成员名调用”。
+
+4.static成员函数声明时加上static关键字，在定义时不能加static关键字。
+5.static成员函数不能使用const以修饰其不改变成员属性。
+6.static成员函数不能使用virtual以修饰其虚拟性。
+
+7.static数据成员声明时，写明static关键字，定义时不能加static关键字。
+8.static const数据成员必须在类中声明并且初始化，然后在类定义之外再次进行定义，如：
+
+
+//.h
+class A
+{
+public:
+static const int i = 30;
+static void show();//声明
+};
+
+//.cpp
+void A::show(){}//定义
+
+
+//main.cpp
+int b = A::i;
+A::show();
+

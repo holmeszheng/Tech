@@ -1,0 +1,14 @@
+class test
+{
+public:
+    test():a(3),my_string("hello"){}
+    const int a;
+    static int b;
+    static const int c = 100;
+    string my_string；
+};
+int test::b = 5;
+
+const 变量constructor中初始
+static变量类外定义初始
+static const类中声明兼定义初始

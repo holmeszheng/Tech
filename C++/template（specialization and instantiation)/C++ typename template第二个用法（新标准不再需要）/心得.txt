@@ -1,0 +1,51 @@
+typename
+typedef std::vector<T>::size_type size_type;//ill-formed
+typedef typename std::vector<T>::size_type size_type;
+因为在使用vector<T>::时，无法确定是访问的static member data 还是 member type,所以需要用typename来说明这是个typename.
+
+
+使用模板类内定义的嵌套依赖类型名字时，用typename显式指明这个名字是一个类型名。依赖名字：在一个模板类中用typedef定义的名字。
+AKA: vector<T>::size_type中size_type依赖于vector<T>。。。。。。。。。。。。。。。。
+
+
+template
+（模板)类内部定义了模板成员函数或者嵌套的成员模板类。在模板中，当引用这样的模板成员函数或嵌套的成员模板类时，可以在::（作用域解析）运算符、.（以对象方式访问成员）运算符、->（以指针方式访问成员）运算符之后使用template关键字，随后才是模板成员函数名字或嵌套的成员模板类名字，这使得随后的左尖括号<被解释为模板参数列表的开始，而不是小于号运算符。C++11起，这一用途也可以出现在模板以外，尽管此时template关键字不是必要的。
+	即，在模板中，使用了:: ,   .  ,   ->并且其后有模板的调用的时候，需要使用template.
+不在模板中使用时，可不用加template。
+
+
+class A { public:
+    template <class U> class B{
+         public: typedef int INT;
+    };
+    template <class V> void foo(){}
+};
+
+template <typename T>
+int f()
+{
+  typename T::template B<double>::INT i;     //此处，typename是因为 INT是依赖名字        template是因为在此模板中，应用了::并且其后有模板的调用  B<double>。
+  i=101;
+  T a, *p=&a;
+  a.template foo<char>();      //此处，template是因为在此模板中，应用了.并且有模板的调用 ， 不在此模板中使用就不需要了。
+  p->template foo<long>();	//此处，template是因为在此模板中，应用了->并且有模板的调用，不在此模板中使用就不需要了。
+  return 0;	
+}
+
+int main()
+{
+  f<A>();
+  A::B<double>::INT i;  // 自C++11起，也可写作typename A::template B<double>::INT i;
+}
+
+
+综上：
+1.	如果一个模板类如下：
+	template<typename T>
+	class test
+	{
+		typedef T mytype;
+	}
+	则typedef typename this->template test<int>::mytype type;
+	template:因为->接着一个test<int>所以需要用template关键字说明这是个template
+	typename：应为mytype的类型依赖于test<T>中的T。

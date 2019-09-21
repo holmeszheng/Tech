@@ -1,0 +1,52 @@
+#install
+sudo apt install docker-io
+don't use snap to install
+
+
+#start service:
+sudo service docker start
+if you use snap : sudo snap start docker
+if you use snap : sudo snap restart docker
+if you use snap : sudo snap stop docker
+
+#stop a service:
+sudo service docker stop
+
+#add current user to docker group, so no need to add sudo before every docker command
+
+Create the docker group.
+$ sudo groupadd docker
+
+Add your user to the docker group.
+$ sudo usermod -aG docker $USER
+
+Log out and log back in so that your group membership is re-evaluated.
+If testing on a virtual machine, it may be necessary to restart the virtual machine for changes to take effect.
+On a desktop Linux environment such as X Windows, log out of your session completely and then log back in.
+Verify that you can run docker commands without sudo.
+
+$ docker images
+
+#show running containers:
+docker ps
+docker ps-a
+
+#show local images:
+docker images
+	equal to docker image list
+
+#run an image and create a container:
+docker run [imageName]
+
+#docker service startup control
+Most current Linux distributions (RHEL, CentOS, Fedora, Ubuntu 16.04 and higher) use systemd to manage which services start when the system boots. Ubuntu 14.10 and below use upstart.
+
+systemd
+enable docker at startup
+$ sudo systemctl enable docker
+
+To disable this behavior, use disable instead.
+$ sudo systemctl disable docker
+
+
+

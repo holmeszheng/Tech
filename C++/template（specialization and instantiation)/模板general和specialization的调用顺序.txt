@@ -1,0 +1,116 @@
+#include <iostream>
+
+using namespace std;
+
+template <typename T, int n = 0> (General template)
+class base1
+{
+private:
+    T m_value;
+public:
+    void show();
+};
+
+template <typename T, int n>
+void base1<T, n>::show()
+{
+    cout<<n<<'\t'<<sizeof(T)<<endl;
+}
+
+template <typename T> (Partial specialization)
+class base1<T, 0>
+{
+private:
+    int specialized;
+    T m_value;
+public:
+    void show();
+};
+
+template <typename T>
+void base1<T, 0>::show()
+{
+    cout<<"specialized!\n";
+    cout<<'0'<<'\t'<<sizeof(T)<<endl;
+}
+
+
+
+
+
+int main()
+{
+    int a;
+    base1<double> object;
+    object. show();
+}
+
+
+template的默认参数是从general template处获得的。
+base1<double> 先访问general， 变成base1<double , 0> 然后访问specialized template， 发现base1<double , 0>符合specialized template， 所以调用该类，而不是general template类。
+
+
+
+类的成员函数的默认参数是静态绑定的：
+
+
+#include <iostream>
+
+using std::cout;
+
+using std::endl;
+
+class Base 
+{
+
+public:
+    
+	virtual void showNumber(int i = 42) 
+	{	
+        
+		cout<< "The answer to life, the universe and everything: " << endl
+<< i << endl;
+    
+	}
+
+};
+
+
+class Derived: public Base 
+{
+
+public:
+
+	void showNumber(int i = 0) 
+	{	
+
+        	cout << i << "! always " << i << endl;
+    
+	}
+
+};
+
+
+int main() 
+{
+    
+	Base b;
+    
+	Derived d;
+
+    	
+	Base * pb = &b;
+    
+	pb->showNumber();
+
+    
+	pb = &d;
+    
+	pb->showNumber();
+
+    
+	Derived * pd = &d;
+    
+	pd->showNumber();
+
+}

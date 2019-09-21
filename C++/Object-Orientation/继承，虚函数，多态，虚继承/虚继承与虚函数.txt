@@ -1,0 +1,88 @@
+虚继承:解决多路径继承相同基类，派生类中有同名成员的问题。
+
+
+class b: virtual public a
+
+
+class c: virtual public a
+
+
+class d: public b, public c
+
+
+虚继承的类叫做虚基类。
+
+
+
+虚函数:基类指针指向派生类，基类指针可以调用派生类同名虚函数。基类指针指向的是派生类中的基类部分，所以只能指向基类已经有的内容（虚函数会使指向的同名虚函数调用发生变化， 但是不能指向基类中没有的部分）
+
+class a
+
+
+{
+
+
+virtual void mprint();
+
+
+}
+
+
+class b: public a
+
+
+{
+
+
+void mprint();(可省略virtual)
+
+
+}
+
+
+int main()
+
+
+{
+
+
+a *p;
+
+
+a a1;
+
+b b1;
+
+
+p=&b1;
+
+
+p->mprint();
+
+
+}
+
+
+纯虚函数:（抽象函数，无function body）
+
+
+
+class base
+
+
+{
+
+
+virtual void mprint()=0;
+
+
+}
+
+
+
+
+虚函数格式需完全相同。
+
+
+
+有纯虚函数的类叫做抽象类（ABC Abstract basic class)

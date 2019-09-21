@@ -1,0 +1,6 @@
+replacement:
+#define square(x) ((x)*(x))
+#define exp(par) #par
+exp(hello) -> "hello"
+#define exp(par1, par2) par1##par2
+exp(hello, world) -> helloworld

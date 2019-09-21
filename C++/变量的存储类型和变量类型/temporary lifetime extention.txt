@@ -1,0 +1,15 @@
+The second context is when a reference is bound to a temporary. 
+The temporary to which the reference is
+bound or the temporary that is the complete object of a subobject to which the reference is bound persists
+for the lifetime of the reference except:
+— A temporary bound to a reference member in a constructor’s ctor-initializer (12.6.2) persists until the
+constructor exits.
+— A temporary bound to a reference parameter in a function call (5.2.2) persists until the completion of
+the full-expression containing the call.
+— The lifetime of a temporary bound to the returned value in a function return statement (6.6.3) is not
+extended; the temporary is destroyed at the end of the full-expression in the return statement.
+— A temporary bound to a reference in a new-initializer (5.3.4) persists until the completion of the
+full-expression containing the new-initializer.
+ 
+能够绑定右值的有const & 和右值引用（&&）两种方式。
+（1）一般来说，temporary的lifetime延长到与绑定到的reference的lifetime相同。

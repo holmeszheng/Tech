@@ -1,0 +1,12 @@
+#define go(x,y) #x  x##y
+go(1,2) #x->"1"
+	x##y -> 12
+
+
+#ifndef HEAD
+#define HEAD
+
+
+
+
+#endif

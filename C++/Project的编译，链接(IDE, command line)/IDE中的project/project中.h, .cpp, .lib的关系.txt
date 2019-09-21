@@ -1,0 +1,12 @@
+在IDE中，一个project已经包含进去的.cpp会自动出现在 make的目标约束中。
+project属性中设置额外的header directory会使#include<>的搜索范围增大，超过default的系统目录,相当于-I
+project属性中设置额外的lib directory，相当于-L:
+	把目标文件归档    ar -r libhello.a hello.o
+    	程序 ar 配合参数 -r 创建一个新库 libhello.a 并将命令行中列出的对象文件插入。采用这种方法，如果库不存在的话，参数 -r 将创建一个新的库，而如果库存在的话，将用新的模块替换原来的模块。
+	在程序中链接静态库
+           gcc test.c -lhello -L. -static -o hello.static 
+或者   gcc test.c libhello.a -L. -o hello.static
+静态库lib的使用：在cpp文件中include了该lib的头文件之后，project属性中设置额外的linker或者#pragma comment(lib,"xxxxx.lib")
+动态库dll的使用：在cpp文件中include了该dll的头文件之后，在系统文件夹或者编译文件夹或者.exe所在的文件夹下包含.dll
+
+综上：在project property中添加目录或者添加.cpp相当于在makefile文件目标约束中增加新的.o,-I,-L。

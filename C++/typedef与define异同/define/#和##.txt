@@ -1,0 +1,11 @@
+##是一个连接符号，用于把参数连在一起形成一个新的token(变量名）   
+#是“字符串化”的意思。出现在宏定义中的#是把跟在后面的参数转换成一个字符串（把该参数左右各加一个双引号）
+
+两个双引号碰到就会消失:
+"hello,""world"->"hello,world"
+
+
+#define paster( n ) printf( "token " #n" = %d\n ", token##n ) 
+所以paster(9);就是相当于 printf("token 9 = %d\n",token9);
+
+9传给n，#n自动变成"9", “#n"变成""9"", 即 9.

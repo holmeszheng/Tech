@@ -1,0 +1,25 @@
+#include <iostream>
+#include <stdarg.h>
+#include <stdlib.h>
+using namespace std;
+void show(int, ...);
+
+int main()
+{
+   show(3, "my", "hello", "world!");
+   return 0;
+}
+void show(int n ,...)
+{
+    va_list ap;
+    va_start(ap, n);
+    char ** slist=new char* [n];
+    for(int i=0; i<n; i++)
+        slist[i] =va_arg(ap, char*);
+    for(int i=0; i<n; i++)
+    {
+        cout<<slist[i]<<endl;
+    }
+    va_end(ap);
+    delete[] slist;
+}

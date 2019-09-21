@@ -1,0 +1,44 @@
+set, map, priority queue 默认使用类型自带的<运算符，如果想改变默认的排序规则，可以在<>中的类型声明中带上greater<int>或者自己定义的函数的函数指针类型+在初始化时在最后一个参数传递该函数参数。
+
+C++的set和map基于红黑树(R&B Tree) 所以是有序的
+priority_queue基于heap（完全二叉树）
+unordered_set->hash_set
+unordered_set->hash_map 基于hash 有hashCode    position = h(key)  key为单值或者pair
+
+
+#include <iostream>
+#include <vector>
+#include <set>
+#include <functional>
+#include <algorithm>
+#include <queue>
+#include <map>
+using namespace std;
+
+bool bigger(const int &a, const int& b)
+{
+    return a>b;
+}
+int main()
+{
+    int a[] = {1,6,10,2,5,12,4,3,1};
+    // set<int, greater<int>> iset(begin(a), end(a));
+    //set<int> iset(begin(a), end(a));
+    //set<int , decltype(bigger)*> iset(begin(a), end(a), bigger);
+    //set<int, bool (*)(const int&, const int&)> iset(begin(a), end(a), bigger);
+    //priority_queue<int, deque<int>> iset (begin(a), end(a));
+    //priority_queue<int, deque<int>, decltype(bigger)*> iset (begin(a), end(a), bigger);
+    //priority_queue<int, deque<int>, bool (*)(const int &a, const int&b)> iset (begin(a), end(a), bigger);
+    priority_queue<int, deque<int>, greater<int>> iset (begin(a), end(a));
+    map<int, int, decltype(bigger)* > iset(bigger);
+    map<int, int, bool (*) (const int&, const int&) > iset(bigger);
+    map<int, int, greater<int> > iset;
+    while(iset.size()>0)
+    {
+        cout<<iset.top()<<endl;
+        iset.pop();
+    }
+//    for(auto &it : iset)
+//        cout<<it<<endl;
+    return 0;
+}

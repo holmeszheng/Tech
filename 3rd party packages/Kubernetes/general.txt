@@ -1,0 +1,15 @@
+Hierarchy:
+
+Kubernetes cluster diagram:
+
+(1) master
+	# deployment: the app stack
+
+(2) node:
+	# kubelet : like docker daemon
+	# docker runtime
+	# pods: each pod has an unique internal ip address across the cluster
+		## containers: exposed port
+		## volumes
+		(all containers in the same pod share volumes and ip address and port)
+

@@ -1,0 +1,18 @@
+string(char *){}
+string a ="hello";
+等同于string a("hello");
+string *c = new string("hello");
+
+
+
+string(const string &){}
+string b = a;
+等同于string b(a);
+string *b = new string(a);
+
+
+
+
+默认构造函数
+string a；
+string *a = new string；（无括号）

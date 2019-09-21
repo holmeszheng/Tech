@@ -1,0 +1,39 @@
+tuple操作:
+constructor:
+(1)default
+	tuple<int,int,string> myTuple（）；
+(2)copy constructor
+(3)initializer_list
+	tuple<int,int,string> myTuple({1,2,"string”}）；
+make_tuple(pars) 返回tuple object
+
+
+operations:都是友元函数
+elements number:
+std::tuple_size<tuple_type>::value
+elements type:
+std::tuple_element<1, tuple_type>::type
+elements value:
+std:get<index>(tuple_variable)
+relational operators:<,<=，==,!=,>,>=
+
+tie:
+还有一种方法也可以获取元组的值，通过std::tie解包tuple
+std:tuple<int, int, string> tp{1,2,"string"};
+int x,y;
+string a;
+std::tie(x,y,a) = tp;
+cout<<x<<'\t'<<y<<'\t'<<a<<endl;
+通过tie解包后，tp中三个值会自动赋值给三个变量。
+解包时，我们如果只想解某个位置的值时，可以用std::ignore占位符来表示不解某个位置的值。
+比如我们只想解第三个值时：
+std::tie(std::ignore,std::ignore,y) = tp; //只解第三个值了
+
+tie得到每各tuple中元素的左值引用：    int x=1, y=2;
+    string c = "string";
+    auto tp=std::tie(x,y,c);
+    cout<<(typeid(decltype(tp))==typeid(tuple<int&, int&, string&>))<<endl;
+forward_as_tuple的到tuple中元素的右值引用：
+	std::map<int, std::string> m;
+	m.emplace(std::forward_as_tuple(10, std::string(20, 'a')));
+它实际上创建了一个类似于std::tuple<int&&, std::string&&>类型的tuple。

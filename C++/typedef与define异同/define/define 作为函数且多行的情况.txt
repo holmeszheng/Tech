@@ -1,0 +1,7 @@
+#define USER_ASSERT(check,msg)\
+	if (!(check))\
+	{\
+		std::ostringstream ost;\
+		ost<<"User assertion failed: \""<<msg<<"\", at line "<<__LINE__<<", file "<<__FILE__<<std::endl;\
+		ReportError(ost.str().c_str());\
+	}

@@ -1,0 +1,41 @@
+C++里，变量有存储类型和类型之分
+存储类型有：左值（local auto, static(internal static, external static, local static, static variable and function), heap),右值(xvalue, literal, temporary(function returned object, conversion, expression)
+类型有：object, pointer, reference
+所以一个变量到底是什么，看声明部分：
+string a 就是object(pass by value)
+string *a 就是pointer(pass by value)
+string &a 就是reference(pass by reference)
+在function 传参和传回来时与声明没有区别。
+
+Java中，primitive是object，类的变量的类型都是reference。
+1、返回对象
+string operator+（string& a, string &b）
+{
+	string c;
+	return c;
+}
+
+	返回对象一般由于函数中返回生成新的临时/局部 对象，所以不能返回该临时/局部 对象的引用。
+	在return c的时候，并不知道函数返回的是对象还是引用。
+	由于函数返回类型是string，所以知道返回的是对象。 从c调用构造函数（copy，move）初始化temporary。
+	如果函数的返回值给了初始化string a = func（）那么，从temporary调用该类的构造函数初始化a。
+	如果函数的返回值给了赋值string a； a= func（），从temporary调用该类的赋值运算符重载函数（copy，move）。
+	如果函数的返回值给了const string &a = func（）；，引用a关联到了临时对象temp，在该语句；结束后，temp析构了，该引用a非法。
+2、返回引用
+string &operator=（string &a)
+{
+	return c;
+}
+	引用变量除了声明的时候不生成对象以外，所有使用的时候全部等价于关联的对象本身。
+	函数返回该对象的引用，string &temp =a，不生成对象，temp关联到对象a。
+	如果函数的返回值给了初始化string c = func（），那么用该对象a（参数：引用等同实体）调用该类的复制构造函数生成c。
+	如果函数的返回值给了赋值string c； c= func（），那么用该对象a（参数：引用等同实体）调用该类的=运算符重载函数。
+	如果函数的返回值给了引用string &c = func（），那么该引用c关联到temp（使用时等同于实体对象），等同于关联到a.
+
+
+
+在默认没有给出的情况下，复制构造函数和=运算符重载都有默认形式，都是相应成员的浅复制，若成员为对象，调用该类的复制构造函数（初始化），或者调用该类的=运算符重载（赋值）。
+一/三/二法则：
+什么构造函数都没有就有default，
+只要没有copy constructor，overloaded assignment operator， destructor，就生成默认版本。
+只要有了三就不会有自动生成的move constructor和move overloaded assignment operator。

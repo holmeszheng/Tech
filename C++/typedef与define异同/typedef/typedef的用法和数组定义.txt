@@ -1,0 +1,12 @@
+typedef后面接的是表达式：typedef expression；
+
+typedef char list[30];
+list 的类型是char [30] ->可以理解为 char*  类型
+char [30]不能赋给 char [30], 可以赋给char*。
+list hello is equal to char hello[30].
+
+typedef char list[3][5];
+list 的类型是char  [3][5] -> 可以理解为   char （*)[5]，指向有5个元素的数组。
+char [3][5] 不能赋给char [3][5]， 可以赋给char （*）[5];
+list hello is equal to char hello[3][5].
+hello的类型是 char (*)[5]但是已经被分配了3个了，不能被char (*)[5]赋值，但是能赋值给char (*)[5].

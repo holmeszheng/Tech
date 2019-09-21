@@ -1,0 +1,23 @@
+docker proxy:
+(1)create  ~/.docker/config.json
+On the Docker client, create or edit the file ~/.docker/config.json in the home directory of the user which starts containers. Add JSON such as the following, substituting the type of proxy with httpsProxy or ftpProxy if necessary, and substituting the address and port of the proxy server. You can configure multiple proxy servers at the same time.
+
+You can optionally exclude hosts or ranges from going through the proxy server by setting a noProxy key to one or more comma-separated IP addresses or hosts. Using the * character as a wildcard is supported, as shown in this example.
+
+{
+ "proxies":
+ {
+   "default":
+   {
+     "httpProxy": "http://127.0.0.1:3001",
+     "httpsProxy": "http://127.0.0.1:3001",
+     "noProxy": "localhost,127.0.0.1"
+   }
+ }
+}
+(2)
+create /etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+Environment="HTTP_PROXY=http://proxyprd.scotia-capital.com:8080/"
+Environment="HTTPS_PROXY=http://proxyprd.scotia-capital.com:8080/"
+Environment="NO_PROXY=localhost,127.0.0.1"

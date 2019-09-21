@@ -1,0 +1,10 @@
+前置声明：
+class StrBlobPtr;
+只能让后面的类使用该声明中的类名和构造函数，不能访问其成员，因为该类没有具体声明
+如果B类用到了A类的成员，那么A类必须在B类之前完整声明。
+如果A类只是用到了B类的类名和构造，那么B类在A类前给出前置声明。
+class StrBlobPtr;
+class StrBlob{用StrBlobPtr名字和构造，声明友元类StrBlobPtr}
+class StrBlobPtr{用到StrBlob成员}
+
+用到成员则前面必须有完整声明（不需要成员的详细定义），只用到名字，则有前置声明就可以。

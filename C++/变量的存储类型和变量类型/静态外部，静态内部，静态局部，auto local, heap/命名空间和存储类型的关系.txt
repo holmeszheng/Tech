@@ -1,0 +1,33 @@
+定义的四种属性：
+局部自动
+局部静态
+静态内部
+静态外部
+（namespace中的定义或者声明和外域::中的定义和声明在属性上没有区别，只是封装在了namespace::域中,用了using以后表示该名称在本空间可用，定义的产生和空间的分配在namespace中产生（不管using了与否））
+eg:
+my_region.h
+namespace my_region
+{
+   extern int m_data;
+}
+
+my_region.cpp
+#include  "my_region.h"
+namespace my_region
+{
+    int m_data = 5;
+}
+
+redundency.cpp
+#include  "my_region.h"
+
+main.cpp
+#include <iostream>
+#include "my_region.h"
+int main()
+{
+    using namespace std;
+    cout<<my_region::m_data<<endl;
+}
+
+m_data的用法与外域::相似，只不过封装到了my_region命名空间中，并不改变存储类型。

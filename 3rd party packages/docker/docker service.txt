@@ -1,0 +1,59 @@
+# docker-compose.yml -> corordinate containers
+
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: username/repo:tag
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+networks:
+  webnet:
+
+# explaination:
+Pull the image we uploaded in step 2 from the registry.
+
+Run 5 instances of that image as a service called web, limiting each one to use, at most, 10% of the CPU (across all cores), and 50MB of RAM.
+
+Immediately restart containers if one fails.
+
+Map port 80 on the host to web’s port 80.
+
+Instruct web’s containers to share port 80 via a load-balanced network called webnet. (Internally, the containers themselves will publish to web’s port 80 at an ephemeral port.)
+
+Define the webnet network with the default settings (which is a load-balanced overlay network).
+
+# docker swarm init
+	initiate this node as swarm manager
+# docker stack deploy -c docker-compose.yml getstartedlab
+	create a stack called getstartedlab on this swarm manager
+# docker service ls
+	show all services prepended with your app name like getstartedlab_web.
+#  docker stack ps getstartedlab
+	show all services filtered by the stack like inside getstartedlab there is getstartedlab_web.
+# docker stack ls
+	show all stacks in this swarm cluster
+# docker service ps getstartedlab_web
+	list containers in service getstartedlab_web
+	vs. docker container ls
+		this will show all containers not filtered by the enclosing service.
+# scale the app
+	docker stack deploy -c docker-compose.yml getstartedlab
+	run and in-place update the stack getstartedlab
+# docker stack rm getstartedlab
+	remove a stack in this swarm
+# docker swarm leave
+	ask a participating node to leave this swarm cluster
+	docker swarm leave --foce
+		ask the swarm manager to leave this swarm forcely
+

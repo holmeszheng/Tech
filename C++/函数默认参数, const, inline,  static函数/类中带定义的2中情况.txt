@@ -1,0 +1,7 @@
+class A
+{
+	const static int a = 30;
+	enum {fist= 20, second = 10};
+	static int c;
+}
+int A::c = 5;

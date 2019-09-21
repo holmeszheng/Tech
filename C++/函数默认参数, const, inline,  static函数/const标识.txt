@@ -1,0 +1,15 @@
+可以这样理解，char * (const a),即a不可变。
+
+
+至于const char * a其实就是char （const *） a即*a不可变，这样便于理解记忆。
+
+
+注意：实际使用时不要加括号，括号只是便于理解。可以写成char * const a，const char *a=char const *a.
+
+
+const char& operator[] (size_t pos) const;
+c++中的成员函数，第一个const表示返回的是一个const char&，不能改变他的值，第二个const表示这是个常量成员函数，在这个成员函数中，不能改变任何的成员变量的值。
+const类型的对象不能调用非const的成员函数，只能调用const的成员函数。
+非const类型的对象可以调用const和非const的成员函数。
+
+const类型的引用可以调用临时对象和右值(只读），非const类型的引用只能调用左值（读写）。

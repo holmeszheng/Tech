@@ -1,0 +1,27 @@
+#include <iostream>
+#include<functional>
+using namespace std;
+
+typedef void funcname1 (const int &);
+typedef void (*funcname2)(const int &);
+void show(const int &  rhs)
+{
+    cout<<rhs<<endl;
+}
+
+int main()
+{
+
+    cout<<(typeid(funcname1*)==typeid(funcname2))<<endl;   //1
+    cout<<(typeid(funcname1)==typeid(decltype(show)))<<endl;	//1
+    cout<<(typeid(funcname1*)==typeid(decltype(show)*))<<endl;		//1
+    return   0;
+}
+
+
+函数名是函数类型，函数指针是指针。
+函数名可以自动解析为指针。
+
+函数类型加*为函数指针。
+decltype很死板，是什么就是什么（函数类型，数组类型，指针，引用，object)数组名和函数名都不会自动转换为指针。引用和表达式都会解析为引用。
+auto会忽略引用和顶层const。

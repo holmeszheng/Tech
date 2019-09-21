@@ -1,0 +1,35 @@
+int a[2][3];
+数组类型：int[2][3]
+指针类型：int（*）[3];
+数组名有两种解析方式。
+初始化和range for中的auto&和decltype都会解析为数组类型
+函数的形参和实参（argument&parameter）和返回值都会解析为指针类型
+
+void show(int a)
+函数类型：void(int）
+指针类型：void (*)(int)
+函数名有两种解析方式。
+decltype会解析为函数类型,初始化需要数组类型（指针不能初始化数组，只能访问，赋值）
+函数的形参可以定义为函数类型（自动转化为指针类型）或者指针类型，函数的实参会转化为指针类型，返回值需要定义为指针类型。
+typedef int vec3[3];
+		//vec3 数组类型是int[3] 指针类型是int*
+void show(int vec[5])
+{
+    cout<<vec[1]<<endl;
+}
+void pass(void (*name)(int [20]),int vec[100])  //（显式指针类型）
+{
+    name(vec);
+}
+void pass(void name(int [7]),int vec[9])  //（显式函数类型，自动转化为数组类型）
+{
+    name(vec);
+}
+int main()
+{
+
+    int v2[3]={1,2,3};
+    pass(show, v2);	//（传参数组名解析为指针，不管数组的第一个维度是多少5 7 9 20 										100 whatever）
+    return 0;
+}
+

@@ -1,0 +1,52 @@
+//Constructors:
+bitset<n> b;                //b有n位，每位都为0  
+bitset<n> b(u);             //b是unsigned long型u的一个副本  
+bitset<n> b(s);             //b是string对象s中含有的位串的副本  
+bitset<n> b(s, pos, n);     //b是s中从位置pos开始的n个位的副本  
+
+
+//API: (member functions)
+b.any()				b中是存在置为1的二进制位？
+b.none()			b中不存在置为1的二进制位？
+b.count()			b中置为1的二进制位的个数
+b.size()			b中的二进制位数
+b.b[pos]			访问b中在pos处的二进制位
+b.test(pos)			b中pos处的二进制位是否为1？
+b.set()				全部二进制位置位1
+b.set(pos)			pos处置位1
+b.reset()			全部二进制位置位0
+b.reset(pos)			pos处置位0
+b.flip()			全部二进制位反转
+b.flip(pos)			pos处反转
+b.to_string()			返回string
+b.to_ulong()			放回unsigned long
+b.to_ullong()			返回unsigned long long
+os<<b				输出位集到os流			
+			（ostream& operator<<(ostream&, const bitset<N>& MyBits))
+
+//operator overloading
+	&, |, ^, <<, >>, ~, ==, !=等 实现 bitwise的与，或，非，异或，左移，右移等
+bitset& operator&= (const bitset& rhs);
+bitset& operator|= (const bitset& rhs);
+bitset& operator^= (const bitset& rhs);
+bitset& operator<<= (size_t pos);
+bitset& operator>>= (size_t pos);
+bitset operator~() const;
+bitset operator<<(size_t pos) const;
+bitset operator>>(size_t pos) const;
+bool operator== (const bitset& rhs) const;
+bool operator!= (const bitset& rhs) const;
+non-member functions	
+template<size_t N>
+  bitset<N> operator& (const bitset<N>& lhs, const bitset<N>& rhs);
+template<size_t N>
+  bitset<N> operator| (const bitset<N>& lhs, const bitset<N>& rhs);
+template<size_t N>
+  bitset<N> operator^ (const bitset<N>& lhs, const bitset<N>& rhs);
+iostream inserters/extractors	
+template<class charT, class traits, size_t N>
+  basic_istream<charT, traits>&
+    operator>> (basic_istream<charT,traits>& is, bitset<N>& rhs);
+template<class charT, class traits, size_t N>
+  basic_ostream<charT, traits>&
+    operator<< (basic_ostream<charT,traits>& os, const bitset<N>& rhs);

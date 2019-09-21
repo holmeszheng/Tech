@@ -1,0 +1,19 @@
+Definitions:
+LIB Either declares the binary interface to a dynamic library (DLL) or contains the binary code of a library.
+DLL A dynamic library - your application shares these with the system or you use them to keep your code base organized.
+
+A lib is a unit of code that is bundled within your application executable.
+
+A dll is a standalone unit of executable code. It is loaded in the process only when a call is made into that code. A dll can be used by multiple applications and loaded in multiple processes, while still having only one copy of the code on the hard drive.
+
+Attributes:
+Dll pros: can be used to reuse/share code between several products; load in the process memory on demand and can be unloaded when not needed; can be upgraded independently of the rest of the program.
+
+Dll cons: performance impact of the dll loading and code rebasing; versioning problems ("dll hell")
+
+Lib pros: no performance impact as code is always loaded in the process and is not rebased; no versioning problems.
+
+Lib cons: executable/process "bloat" - all the code is in your executable and is loaded upon process start; no reuse/sharing - each product has its own copy of the code.
+	
+static library: .h+.lib(index and implementation)
+dynamic library: .h+.lib(index)+.dll(implementation) 

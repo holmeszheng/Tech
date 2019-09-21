@@ -1,0 +1,136 @@
+变量的存储类型：静态外部变量，静态内部变量，静态局部变量，动态局部变量，heap
+声明和定义的区别：
+前面没有声明的情况下，定义既是定义，又是声明。
+声明：只有名字，不分配内存，由自己的文件或者其他文件分配内存
+extern int a；	（静态外部变量）
+extern RGB A;
+定义：
+int a：
+int a=5;
+RGB A;
+
+特殊：当一个文件int a定义在多个域的时候，另一个文件对应的extern int a;只对应那个文件全局变量的int a；如果没有全局变量，extern int a就是外部无法解析的命令。
+相同，等一个文件的int a定义为全局变量，另一个文件的extern int a;可以出现在不同的域中，只作用于当前的域。
+
+
+函数：函数的默认链接性为静态外部变量
+声明：
+(extern) void hello_print();
+定义；
+void hello_print()
+{
+..................
+}
+
+结构（类）：
+声明：
+struct RGB{
+.....
+};
+typedef struct (RGB){
+........
+}RGB;
+
+定义和声明的区别是是否分配内存还是只存在一个标识。
+
+文件中除了在函数中，只能进行定义和声明(函数本身就是定义），还有宏。
+
+	每个.h文件和.cpp文件必须self-contain，用到的东西都必须在该位置之前被声明。但是.cpp由于包含了.h，所以代码被插入了，所以要将include之后的.cpp整体来看时候是self-contain。
+	模板函数是个例外，由于模板函数只有在实例化的时候才会成为真正的函数。所以模板中的用到与模板关联类型无关的变量和表达式都必须在模板声明之前被定义，但是模板中的用到与模板关联类型相关的变量在模板实例化之前被声明即可。
+
+
+静态内部变量：
+作用域为本文件，不能为别的.cpp使用。
+静态局部变量：
+作用域为局部，只初始化一次。
+
+
+static数据成员的定义方法:
+//.h
+class counter{
+static int count; // 声明：static data member
+const static int county = 2; //声明加定义
+};
+
+//.cpp
+int counter::count=0;// 定义
+
+需要注意的是：
+static数据成员需要在类定义体外部定义。static关键字只能用于类定义体内部的声明中，定义不能标示为static。定义时需初始化。一般static成员不能在类定义体内部初始化，一个例外就是const static数据成员就可以，但该数据成员仍然需要在类外部进行定义。
+在类中使用注意一下几点:
+1.用static可以为类类型的所有对象所共有，像是全局对象，但又被约束在类类型的名字空间中。
+2.可以实施封装，将其放在private或protected区域中。
+3.static成员没有this指针，它不是任何一个对象的组成部分，推荐用“类名::static成员名调用”。
+
+4.static成员函数声明时加上static关键字，在定义时不能加static关键字。
+5.static成员函数不能使用const以修饰其不改变成员属性。
+6.static成员函数不能使用virtual以修饰其虚拟性。
+
+7.static数据成员声明时，写明static关键字，定义时不能加static关键字。
+8.static const数据成员必须在类中声明并且初始化，然后在类定义之外再次进行定义，如：
+
+
+//.h
+class A
+{
+public:
+static const int i = 30;
+static void show();//声明
+};
+
+//.cpp
+void A::show(){}//定义
+
+
+//main.cpp
+int b = A::i;
+A::show();
+
+
+局部自动变量：函数体内定义的变量，生命周期为函数体（括号内）
+int main()
+
+{
+	
+int i;
+	
+int a=3;
+	
+if(1)
+	
+{
+
+int a=5;
+
+printf("%d\n",a);
+	
+}
+
+printf("%d\n",a);
+	
+getchar();
+
+}
+main 中的变量a和if括号中的变量a互不干涉，如果只在if中定义变量a，main中将没有变量a。
+
+类中的静态变量（或函数）：类中声明，类外定义并且初始化。可以在类外调用改变量或者函数。
+class A
+{
+	static int a;
+	static int addition(int, int);
+}
+int A::a = 5;
+int A::addition(int a, int b)
+{
+}
+int main()
+{
+	A::a = 6;
+	A::addition(3,5);
+}
+
+
+
+
+
+

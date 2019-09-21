@@ -1,0 +1,120 @@
+一. Java的子类父类间，同名函数重写、重载
+A.Java
+
+[java] view plain copy
+package testpkg;  
+  
+public class A {  
+    public void func(int a){  
+        System.out.println("A:func(int )");  
+    }  
+    public void func(){  
+        System.out.println("A:func()");  
+    }  
+}  
+
+B.java
+[java] view plain copy
+package testpkg;  
+  
+public class B extends A{  
+    public void func(double b){  
+        System.out.println("B:func(double )");  
+    }  
+    public void func(){  
+        System.out.println("B:func()");  
+    }  
+}  
+
+JavaTest.java
+[cpp] view plain copy
+package testpkg;  
+  
+public class JavaTest {  
+    public static void main(String []args){  
+        A a = new A();  
+        B b = new B();  
+        a.func(1);  
+        a.func();    
+        b.func(1);  //函数未能成功重载，1为int，向上继承了A的func(int )  
+        b.func(1.0); //函数重载  
+        b.func();  //函数重写  
+    }  
+}  
+
+测试输出：
+
+
+发现子类父类同名字的成员函数
+
+1) 在不同参数的情况下可以实现重载，如a.func(1) 和 b.func(1.0) 
+
+由于传入的参数为不同的int 和 double所以可以重载
+2）子类如果有和父类同样的参数，就对该函数进行重写
+
+a.func() 和 b.func() 就是a中的成员函数func在b中重写，被覆盖了
+
+
+二. 下面是C++中的同类问题：
+testCpp.cpp
+
+[cpp] view plain copy
+#include <iostream>  
+  
+using namespace std;  
+  
+  
+class A{  
+public:  
+    void func(int a){  
+        cout << "A:func(int )" << endl;  
+    }  
+    void func(){  
+        cout << "A:func()" << endl;  
+    }  
+};  
+  
+  
+class B : public A{  
+public:  
+    void func(double b){  
+        cout << "B:func(double )" << endl;  
+    }  
+    void func(){  
+        cout << "B:func()" << endl;  
+    }  
+};  
+  
+  
+int main(){  
+    A a;  
+    B b;  
+    a.func(1);  
+    a.func();  
+    b.func(int(1));  
+    b.func(1.0);  
+    b.func();  
+    return 0;  
+}  
+
+测试输出：
+
+
+发现在重载方面，C++不同于Java子类和父类有格子的内存区域
+
+所以A::func(int ) 和 B::func(double) 不能实现重载，子类继承父类后，不能重载父类的同名函数
+
+但是重写还是可以的
+
+
+
+
+
+综上：
+
+Java在子类继承父类时:
+	成员变量同名的覆盖（可以用super和this区分），不同名的按访问权限。
+	成员函数同名的重载，完全相同(function fingerprint)的重写（动态绑定的），或者覆盖（静态绑定的,static,final,private）
+C++在子类继承父类时：
+	成员变量同名的覆盖（可以用::域进行区分），不同名的按访问权限。
+	成员函数同名的覆盖（可以用::域进行区分），不同名的按访问权限。

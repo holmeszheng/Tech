@@ -1,0 +1,28 @@
+C++里，变量有存储类型和变量类型之分
+存储类型有：
+左值：
+	stack:local auto(脏值）
+	static:internal static, external static, local static, static variable and static function
+	heap: new出来的
+右值:
+	literal, xvalue（function returned right value reference）,temporary(function returned object, conversion, expression)
+
+
+变量类型有：object, pointer, reference(left value reference, right value reference)
+所以一个变量到底是什么，看声明部分：
+string a 就是object(pass by value)
+string *a 就是pointer(pass by value)
+string &a 就是reference(pass by reference) (左值引用）string &只能绑定左值，const stirng &可以绑定左值和右值。
+string &&a 就是reference(pass by reference) (右值引用) 右值引用是左值，使用与左值引用完全相同，除了比左值引用优先并且只能绑定右值。
+
+在function 传参和传回来时与声明没有区别。
+在exception handle时， try中throw exception进的是static memory，程序结束才清理掉。catch从static memory中抓。
+
+Java中的存储类型：
+stack(instance variable(有default)，local auto)
+static(static variable（有default))
+heap(new 出来的）
+
+Java中的变量类型：
+primitive的变量类型是object
+类的变量类型是reference

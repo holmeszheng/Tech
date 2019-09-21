@@ -1,0 +1,8 @@
+member type:
+enum days{Monday, Tuesday, Wednesday};
+class MyClass{}
+typedef int MyInt;
+member variable:
+instance variable, static variable
+member function:
+non-static function, static function

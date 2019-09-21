@@ -1,0 +1,1 @@
+C++的nested class仅仅是把另一个class封装到了自己class的namespace中，无任特殊之处。

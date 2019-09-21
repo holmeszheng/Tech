@@ -1,0 +1,69 @@
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+class Test
+{
+private:
+    T m_value;
+public:
+    void operator()();
+    template<typename N>
+    void operator+(N);
+};
+
+template<typename T>
+void Test<T>::operator()()
+{
+    cout<<"General member function\n";
+}
+
+template<>
+void Test<int>::operator()()
+{
+    cout<<"specialized member function\n";
+}
+
+template<typename T>
+template<typename N>
+void Test<T>::operator+(N)
+{
+    cout<<"Operator++ general member function\n";
+}
+
+template<>
+template<typename N>
+void Test<int>::operator+(N)
+{
+    cout<<"Test<int> specialized Operator++ general member function\n";
+}
+
+
+template<typename T>
+template<>
+void Test<T>::operator+<int>(int)
+{
+    cout<<"Test<T> operator<int> specialized Operator++ general member function\n";
+}  //ill-formed   enclosing class templates are not explicitly specialized
+
+template<>
+template<>
+void Test<int>::operator+<int>(int)
+{
+    cout<<"Test<int> operator<int> specialized Operator++ general member function\n";
+}
+
+int main()
+{
+    Test<double>()+2;
+}
+
+
+如果外围类模板没有具体化，内层的模板就不能具体化。
+先有general的模板定义，才可以有特化的定义。
+模板类的声明和定义放在一个.h文件中。
+只有具体化和实例化的时候，名字才可以带尖括号，带类型参数。
+具体化，实例化，部分具体化。
+
+

@@ -1,0 +1,70 @@
+临时对象string("hello");
+const用关联到临时对象时string &r = "hello"，临时对象直到引用的作用域结束才会析构。
+
+
+函数的返回的那个temp不管是什么类型，都是个临时的东西，在回到调用语句的那句;处消失，除非关联到一个const引用，才会在该引用作用域结束消失。
+两个极端错误例子：
+1.
+const string& show_this()
+{
+    return string("hello");
+}
+int main()
+{
+    const string &r = show_this();
+    cout<<r<<endl;
+    return 0;
+}
+错误，函数返回的那个const string& temp本身就是个临时引用，在返回后的；处消失，临时对象string（"hello")在返回到temp时stack内存释放。
+2.
+const string& show_this(const string& ls)
+{
+    cout<<ls<<endl;
+    return ls;
+}
+
+int main()
+{
+    const string &str = show_this("hello");
+    cout<<str<<endl;
+    return 0;
+}
+错误，函数返回的那个const string& temp本身就是个临时引用，在返回后的；处消失，临时对象string("hello")存在于main stack中，关联到ls，函数中一直存在，在调用语句的；处消失。
+3.
+const string& show_this(const string& ls)
+{
+    cout<<ls<<endl;
+    return ls;
+}
+
+int main()
+{
+    cout<<show_this("hello")<<endl;
+    return 0;
+}
+正确，函数返回临时引用temp，关联到ls关联到临时对象string("hello")（存在于main的stack）,函数stack在返回temp的时候释放，但是临时对象string（"hello")存在于main的stack中，temp依旧关联到该临时对象，temp和该临时对象在调用语句的；处消失。
+4.
+string& show_this()
+{
+    string a = "hello";
+    return a;
+}
+int main()
+{
+    （const）有或者没有 string &r = show_this();
+    cout<<r<<endl;
+    return 0;
+}
+函数返回临时引用temp，关联到局部变量a，此时a已经析构了，然后r关联到此局部变量a，出错。
+5.
+string show_this()
+{
+    return string("hello");
+}
+int main()
+{
+    const string &r = show_this();
+    cout<<r<<endl;
+    return 0;
+}
+函数返回了string类型的临时对象temp，关联到const引用，因为是const引用，所以临时对象temp在r的作用域结束才析构。

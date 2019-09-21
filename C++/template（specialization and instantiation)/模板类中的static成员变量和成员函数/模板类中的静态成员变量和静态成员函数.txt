@@ -1,0 +1,103 @@
+	类模板实例化的每个模板类(每个模板类指的是对于声明时候对模板指定的类型，如List<int>,List<double>中的int，double.)都有自己的类模板静态数据成员，该模板类的所有对象,共享一个静态数据成员。
+
+Tips:
+
+(重要)1.模板类的静态数据成员应在文件范围内初始化(定义)。(包含模型)
+
+(重要)2.每个模板类有自己的类模板的静态数据成员和成员函数副本。
+
+	静态成员的初始化时间：
+	不确定类型（域名和类型名）静态成员的初始化不是在模板类的声明代码中，而是在第一次该模板类或者模板函数实例化的时候，静态成员此时分配内存。若下次实例化的时候，实例化的是该模板类的不同参数的模板，则，这个模板和上个模板没有关系，该类的静态成员初始化。下次，如果实例化同一个模板类的时候，不重新对静态成员分配内存。
+	确定类型（域名和类型名都确定了），在读到该变量的定义的时候初始化。同确定类型的普通成员函数，或者确定类型的静态成员函数。
+	
+
+	模板类中的都是声明，不是定义，所以不分配内存。但是如果在定义中是不完全类型（带有template<typename T>，则还是声明。 
+static:类中声明，类外作为static external初始化 (不完全类型类外还是定义，完全类型与非模板类相同）
+const：类中声明，在initializing list中初始化
+static const类型直接在声明的时候初始化，分配内存。
+	所以在模板类中声明了static变量后，一定要在外面定义该静态变量。
+
+
+
+//////////////main.cpp
+#include <iostream>
+#include "header.h"
+using namespace std;
+int main()
+{
+    //static Field
+    Test<int> a;
+    Test<double> b;
+    cout << "Test<int>::k  -->  " << a.k << endl;
+    cout << "Test<double>::k  -->  " << b.k << endl;
+    Test<int> v;
+    Test<double> m;
+    cout << "Test<int>::k  -->  " << Test<int>::k << endl;
+    cout << "Test<double>::k  -->  " << Test<double>::k << endl;
+
+    //static Function
+    cout << endl;
+    Test<int>::incrementK();
+    cout << "After invoke Test<int>::incrementK()  Test<int>::k --> " << Test<int>::k
+
+<< endl;
+    Test<double>::incrementK();
+    cout << "After invoke Test<double>::incrementK()  Test<double>::k --> " <<
+
+Test<double>::k << endl;
+
+    Test<float> m_float;
+    cout<<"Test<float>::k -->   "<<Test<float>::k<<endl;
+
+    return 0;
+}
+
+/////////////header.h
+#ifndef HEARDER
+#define HEARDER
+
+template < typename T > // （general template)
+class Test
+{
+public:
+    Test(T num){
+        k += num;
+    }
+    Test(){
+        k += 1;
+    }
+    static void incrementK()
+    {
+        k += 1;
+    }
+    static T k;
+};
+
+template<typename T>
+T Test<T>::k = 0;  // (因为有template关键字，所以可以包含在.h中，还是声明）
+
+template < >	//(specialized template)
+class Test<int>
+{
+public:
+    Test(int num){
+        k += num;
+    }
+    Test(){
+        k += 1;
+    }
+    static void incrementK()
+    {
+        k += 1;
+    }
+    static int k;
+};
+
+
+
+#endif
+/////////////////Ext1.cpp
+#include "hearder.h"
+
+int Test<int>::k = 1992;// （因为没有template关键字，所以相当于非模板类下的static external定义，需要放在.cpp中，如果放在.h中则相当于静态外部变量重复定义）
+

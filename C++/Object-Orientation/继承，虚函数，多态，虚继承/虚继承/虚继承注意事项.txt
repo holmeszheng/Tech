@@ -1,0 +1,115 @@
+1.必须在在第一级继承时就要将共同基类设计为虚基类。
+虚基类举例
+class B { public: int b;};
+class B1 : virtual public B { private: int b1;};
+class B2 : virtualpublic B { private: int b2;};
+class C: public B1, public B2{ private: float d;};
+2.继承时，如果继承的基类继承了虚基类，那么不管是不是多重继承都要在构造函数中单独为虚基类构造。
+class B { public: int b;};
+class B1 : virtual public B { private: int b1;};
+class C1 : public B1   (单一继承虚基类的情况）
+{
+	C1(int a, int b, int c): B1(a, b), B(a){}
+}
+class C: public B1, public B2 (继承路径上有共同虚基类的情况）
+{ 
+	C(int a, int b, int c): B1(a, b), B2(a, b), B(a){}
+	private: float d;
+}
+3.使用了虚基类，可以有C::B1::B::的表达 此时B没有二义性
+不适用虚基类，C::B1::B::或者C::B2:B::的表达，B有二义性（？）
+4.多重继承没有共同虚基类的情况下，是没有共同的最远基类的，所以不能实现多态（基类指针指向派生类）
+如果多重继承了共同的虚基类，那么共同的虚基类只会有一个副本，此时可以用基类的指针实现多态。
+
+
+
+Example：
+#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+class base
+{
+private:
+    int m_a;
+public:
+    base(int a):m_a(a){};
+    virtual void myprint();
+};
+void base::myprint()
+{
+    printf("base::myprint:%d\n", m_a);
+}
+class base1:  virtual public  base
+{
+private:
+    int m_b;
+public:
+    base1(int a, int b):base(a),m_b(b){};
+    virtual void myprint()
+    {
+        printf("showing base1:\n");
+        this->base::myprint();
+    }
+     virtual void myprint1()
+    {
+        printf("base1::mypirnt1:%d\n", m_b);
+    }
+};
+class base2:  virtual public base
+{
+private:
+    int m_b;
+public:
+    base2(int a, int b):base(a),m_b(b){};
+    virtual void myprint()
+    {
+        printf("showing base2:\n");
+        this->base::myprint();
+    }
+    virtual void myprint1()
+    {
+        printf("base2::mypirnt1:%d\n", m_b);
+    }
+};
+class temp :public base1
+{
+private:
+    int m_c;
+public:
+    temp(int a, int b, int  c):base1(a, b), base(a), m_c(c){}
+    virtual void myprint()
+    {
+        printf("showing temp:\n");
+        base1::base::myprint();
+    }
+    virtual void myprint1()
+    {
+        printf("temp::mypirnt1:%d\n", m_c);
+    }
+};
+class superclass:public base1, public base2
+{
+private:
+    int m_c;
+public:
+    superclass(int a, int b, int  c):base1(a, b),base2(a, b), base(a), m_c(c){}
+    virtual void myprint()
+    {
+        printf("showing superclass:\n");
+        base2::myprint();
+    }
+    virtual void myprint1()
+    {
+        printf("superclass::mypirnt1:%d\n", m_c);
+    }
+};
+int main()
+{
+    base *object = new superclass(1,2,3);
+    object->myprint();
+    //object->base1::myprint();
+    //object->base1::base::myprint();
+    //object->base::myprint();
+    return 0;
+}

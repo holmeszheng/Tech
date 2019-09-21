@@ -1,0 +1,45 @@
+[C++再学习系列] STL容器删除操作总结
+2011-01-30 zhenjing,
+由于容器所对应不同的迭代器、指针和引用的失效规则 ，使得容器的删除操作较为复杂。解决问题的最好方法取决于你是怎样鉴别出哪个对象是要被去掉的，储存它们的容器的类型，和当你删除它们的时候你还想要做什么（如果有的话）。为此分 3 种情况讨论：
+去除一个容器中有特定值的所有对象：
+ 1) 如果容器是 vector 、 string 或 deque ，使用 erase-remove 惯用法。
+2) 如果容器是 list ，使用 list::remove 。
+3) 如果容器是标准关联容器，使用它的 erase 成员函数。
+示例：
+Container c;  // 去除值为 1963 的元素
+c.erase(remove(c.begin(), c.end(), 1963), c.end()); // 当 c 是 vector 、 string 或 deque 时， erase-remove 惯用法是去除特定值的元素的最佳方法
+c.remove(1963);     // 当 c 是 list 时， remove 成员函数是去除特定值的元素的最佳方法
+c.erase(1963);        // 当 c 为关联容器
+去除一个容器中满足一个特定判定式的所有对象：
+1) 如果容器是 vector 、 string 或 deque ，使用 erase-remove_if 惯用法。
+2) 如果容器是 list ，使用 list::remove_if 。
+3) 如果容器是标准关联容器，使用 remove_copy_if 和 swap( 使用临时容器 ) ，或写一个循环来遍历容器元素，当你把迭代器传给 erase 时记得后置递增它。
+示例：特定判断式 : bool badValue(int x);   // 返回 x 是否是“ bad ”
+c.erase(remove_if(c.begin(), c.end(), badValue),  c.end()); // 当 c 是 vector 、 string 或 deque
+c.remove_if(badValue);     // 当 c 是 list 时
+// 关联容器的删除 : 使用 “后置递增传给erase的迭代器” 技术
+AssocContainer c;
+for (AssocContainer::iterator i = c.begin();  // for 循环的第三部分是空的
+       i != c.end();  /*nothing*/ ){        // 循环体控制 i 递增
+       if (badValue(*i)) {
+c.erase(i++);   // 删除 i ，副作用 i 递增
+    // logFile << "Erasing " << *i <<'\n';    // 写日志文件 ,or other operators
+       }
+       else ++i;         // 递增
+}
+说明：为什么要使用后置递增？后置递增会增加临时副本，效率低。但此处一定要使用后置递增。关联容器的erase并不返回删除后的下一个有效迭代器，同时删除后的迭代器是无效迭代器。 为达到删除单前迭代器同时指向后一个迭代器，我们必须在删除前递增迭代器，同时记录当前迭代器并删除。后置递增操作除增加迭代器外，同时返回递增前的对象拷贝，完全满足所需的删除条件。
+在循环内做某些事情并删除对象：
+1) 如果容器是标准序列容器，写一个循环来遍历容器元素，每当调用erase时记得都用它的返回值更新你的迭代器。
+2) 如果容器是标准关联容器，写一个循环来遍历容器元素，当把迭代器传给erase时记得后置递增它(例子同上) 。
+示例：标准序列容器 ( 标准关联容器，同上 )
+for (SeqContainer::iterator i = c.begin();
+       i != c.end();){
+       if (badValue(*i)){
+              logFile << "Erasing " << *i << '\n';
+              i = c.erase(i);         // 通过把erase的返回值获取有效的迭代器
+       }                                
+       else
+              ++i;
+}
+说明：对序列容器为什么不使用 “ 后置递增你要传给 erase 的迭代器 ” 技术？原因在于 vector 、 string 和 deque 容器调用 erase 后，不仅使所有指向被删元素的迭代器失效，也使被删元素之后 的所有迭代器失效 ( 可能重新分配地址空间 ) 。为了使序列容器的 erase 后，能获得删除后的有效迭代器，其 erase 将迭代器作为返回值：一旦删除完成， erase 返回指向紧接在被删元素之后的元素的有效迭代器。
+注意： list 虽是序列容器，但采用节点存储方式，故不存在地址重新分配。因此可以像 vector/string/deque 一样或像关联容器一样对待 list ；两种方法都可以为 list 工作。

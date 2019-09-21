@@ -1,0 +1,60 @@
+	模板只有实例化之后才会变成真正的函数或者类，否则，并不会产生任何作用域(只是声明，没有定义，C++中只有定义才会有作用域）。
+#include <iostream>
+using namespace std;
+
+struct Op
+{
+    int a;
+};
+
+template<typename T>
+T add(const T&a, const T &b)
+{
+    cout<<"Add called:  "<<a+b<<endl;
+    show(a, b);
+    return a+b;
+}
+//cout<<和a+b在后面定义，但是It works!
+template<typename T>
+void show(const T&a, const T &b)
+{
+    cout<<"show!\n";
+}
+
+/*若是不是模板函数
+void show(const Op&a, const Op &b)
+{
+    cout<<"show!\n";
+}
+依然OK，因为模板中对此函数调用了模板关联的参数show(a, b);*/
+/*如果对show的调用不关联模板关联的参数，则必须在此之前给出show()的声明*/
+
+
+
+/*总结*/
+/*即,在模板中调用没有模板关联类型的变量或者函数，则必须在模板的声明之前声明，若是调用模板关联的类型的变量或者函数，则在实例化之前声明即可*/
+/*不确定类型的表达式需要等到模板实例化的时候,实例化之前有声明即可，确定类型的表达式必须在模板声明的时候就有声明*/
+
+Op operator+(const Op &a, const Op &b)
+{
+    Op c;
+    c.a = a.a+b.a;
+    return c;
+}
+ostream& operator<<(ostream &out, const Op &temp)
+{
+    out<<temp.a;
+    return out;
+}
+
+
+int main()
+{
+   double one =1.0;
+   double two =2.0;
+   Op object1;
+   Op object2;
+   object1.a =1.1;
+   object2.a =2.2;
+   add(object1, object2);//实例化在此产生
+}

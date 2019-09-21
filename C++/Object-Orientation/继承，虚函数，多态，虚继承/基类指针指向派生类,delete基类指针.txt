@@ -1,0 +1,74 @@
+基类指针指向派生类对象，如果delete基类指针时，只会调用基类对象的析构函数，导致派生类对象内存泄漏。
+所以要把析构函数声明为虚函数，这样delete基类指针，会调用派生类的析构函数，完成全部析构过程。
+C++对象构造顺序：
+基类成员
+基类constructor function
+派生类成员
+派生类constructorfunction
+C++对象析构顺序：
+派生类destructor function
+派生类成员
+基类destructor function
+基类成员
+
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class Mem1
+{
+public:
+    Mem1()
+    {
+        cout<<"this is Mem1's constructor"<<endl;
+    }
+    ~Mem1()
+    {
+        cout<<"this is Mem1's destructor"<<endl;
+    };
+};
+class Mem2
+{
+public:
+    Mem2()
+    {
+        cout<<"this is Mem2's constructor"<<endl;
+    }
+    ~Mem2()
+    {
+        cout<<"this is Mem2's destructor"<<endl;
+    };
+};
+class Base
+{
+public:
+    Mem1 m_a;
+    Base()
+    {
+        cout<<"this is Base's constructor"<<endl;
+    }
+    virtual ~Base()
+    {
+        cout<<"this is Base's destructor"<<endl;
+    }
+};
+class Der:public Base
+{
+public:
+    Mem2 m_a;
+    Der():m_a()
+    {
+        cout<<"this is Der's constructor"<<endl;
+    }
+    virtual ~Der()
+    {
+        cout<<"this is Der's destructor"<<endl;
+    }
+};
+int main() {
+{
+    Base *pb = new Der();
+    delete pb;
+}
+}

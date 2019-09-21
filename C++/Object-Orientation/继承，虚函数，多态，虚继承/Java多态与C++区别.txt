@@ -1,0 +1,40 @@
+C++:
+#include <iostream>
+using std::cout;
+using std::endl;
+
+class Base {
+public:
+    virtual void doShowNumber(int i) {
+        cout << "The answer to life, the universe and everything: " << endl
+             <<i << endl;
+    }
+public:
+    void showNumber(int i = 42) {
+        doShowNumber(i);
+    }
+};
+
+class Derived: public Base {
+private:
+    void doShowNumber(int i) {
+        cout << i << "! always " << i << endl;
+    }
+};
+
+int main() {
+    Base b;
+    Derived d;
+
+    Base * pb = &b;
+    pb->showNumber(); //The answer to life, the universe and everything:42
+
+    pb = &d;
+    pb->showNumber(); //42 !always 42
+
+    Derived * pd = &d;
+    pd->showNumber(); //42 !always 42
+}
+
+C++中只要是虚函数就是动态绑定的，访问权限在于基类的指针中该虚函数的访问权限，所以就算基类虚函数是public，派生类虚函数是private，也可以通过基类指针访问派生类的private虚函数。
+Java中只有final（不能被overriden）、static（bound to class, 与object无关，不能多态）、private（有意思）和构造方法（没意义）是静态绑定的，即引用类型是什么，调用出来的方法就是其本身的方法。其它所有方法都采用动态绑定，所以不能在派生类中降低虚函数（即重写方法）的可见度。

@@ -1,0 +1,142 @@
+insert用法：	it为iterator
+Sequential container:
+c.insert(it,val)
+c.insert(it,b,e)
+c.insert(it,initializer_list)// insert、erase操作引起迭代器失效问题  
+c.insert(it,n,t) (sequence only) 
+Associative container:
+c.insert(it,val) it is used as a hint。
+c.insert(val)
+c.insert(b,e)
+c.insert(initializer_list)
+
+
+对于vector,string,deque,因为他们是顺序存储的，insert(it,value)到的位置就是it指向的位置，后面的元素会O(n)向后移动，可能会导致内存重新分配一块更大的连续内存，所以可能会导致it和it后面的迭代器全部失效（指向的位置不对），所以需要获得他们的返回值(指向插入it后面的iterator)，重新设置iterator。
+对于list和forward_list,他们是链式存储的，所以insert不会使iterator失效，erase会导致当前iterator失效（不能再使用进行++，--操作）。
+对于set,unordered_set,multiset,unordered_multiset,map等，由于存储的方式是按照大小或者hash来存储，insert时给的it只是从那里开始算起而已，不代表val插入的位置，所以insert返回的迭代器的位置指向val插入的位置，不好说在哪里。但是insert不会使iterator失效，但是erase会。
+综上，只有顺序存储的insert才会失效，但是只要是erase都会失效。
+
+	erase用法：
+vector等：
+	erase(it)
+	erase(b,e)
+	remove(b,e,val)是泛型算法，返回的是把删除的val放到最后面的iterator起始位置。
+list:
+	erase(it）
+	erase(b,e)
+list有自己的成员函数能实现:
+	sort()
+	remove(value) 直接删除含val的所有节点。
+	remove_if
+set,map等：
+	erase(it)	返回紧跟it后面的那个元素的iterator。
+	erase(b,e)	
+	erase(val)	会删除含val的所有节点，返回删除掉的个数。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reference:
+// insert、erase操作引起迭代器失效问题  
+  
+#include "stdafx.h"  
+#include <iostream>  
+#include <list>  
+#include <vector>  
+#include <algorithm>  
+  
+using namespace std;  
+  
+void print_list(const list<int>& l)  
+{  
+    list<int>::const_iterator it;  
+    for(it=l.begin(); it!=l.end(); ++it)  
+    {  
+        cout<<*it<<ends;  
+    }  
+    cout<<endl;  
+}  
+  
+int _tmain(int argc, _TCHAR* argv[])  
+{  
+    // 迭代器失效问题的解决方式：  
+    // 确保传给insert、erase的迭代器在下次insert、erase操作时有效  
+    // 一般是将迭代器重置为insert、erase返回值（再适当++、--）或者重新计算迭代器  
+    int a1[] = { 1,2,3,4,5 };  
+    int a2[] = { 1,2,6,7,8 };  
+    list<int> list1(a1, a1+sizeof(a1)/sizeof(a1[0]));  
+    list<int> list2(a2, a2+sizeof(a2)/sizeof(a2[0]));  
+  
+    // 删除list2中值属于list1的元素(1,2)  
+    list<int>::iterator it;  
+    for(it=list1.begin(); it!=list1.end(); ++it)  
+    {  
+        auto pos = find(list2.begin(), list2.end(), *it);  
+        if(pos != list2.end())  
+        {  
+            list2.erase(pos);  
+        }  
+    }  
+    print_list(list2);  
+  
+    // 在list2中插入属于list1但不属于list2的值（3,4,5）  
+    for(it=list1.begin(); it!=list1.end(); ++it)  
+    {  
+        auto pos = find(list2.begin(), list2.end(), *it);  
+        if(pos == list2.end())  
+        {  
+            // 每次pos都被重新定义和计算，无需重置pos为返回值，虽然这次操作后当前pos失效  
+            list2.insert(pos, *it);  
+        }  
+    }  
+    print_list(list2);  
+  
+    // 删除list2中值不属于list1的元素（6,7,8）  
+    for(it=list2.begin(); it!=list2.end(); )  
+    {  
+        auto pos = find(list1.begin(), list1.end(), *it);  
+        if(pos == list1.end())  
+        {  
+            // 注意迭代器失效问题，如果不保存it,it失效,则++it是未定义行为,  
+            // it值必须同时改变为返回值（删除之后的迭代器）  
+            it = list2.erase(it);   
+        }  
+        else  
+            ++it;  
+    }  
+    print_list(list2);  
+  
+    // 在list2中插入一次性5个属于list1又属于list2的值（1,2,3,4,5）  
+    for(it=list1.begin(); it!=list1.end(); ++it)  
+    {  
+        auto pos = find(list2.begin(), list2.end(), *it);  
+        if(pos != list2.end())  
+        {  
+            for(int i=0; i<5; ++i)  
+            {  
+                // 注意迭代器失效问题，如果不保存pos，pos失效第二次插入时pos已经失效  
+                // 在pos之前插入，返回指向新元素的迭代器（pos-1）  
+                pos = list2.insert(pos, *it);   
+                // 确保每次在相同位置插入：第一次的pos之前  
+                ++pos;  
+                // ++pos; // error! pos指向将不定  
+            }  
+        }  
+    }  
+    print_list(list2);  
+  
+    return 0;  
+}  

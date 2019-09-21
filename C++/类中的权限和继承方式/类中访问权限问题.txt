@@ -1,0 +1,27 @@
+C++：
+access 的权限看的是访问时的位置
+private 成员只能在in-class 被访问
+protected 成员只能在in-class 被访问
+public 成员可以在everywhere访问
+
+继承方式有三种：
+public:
+	public->public, protected->protected, private->不可见
+protected:
+	public->protected, protected->protected, private->不可见
+private:
+	public->private, protected->private, private->不可见
+
+Java:
+access的权限看的是访问时的位置
+private: in-class
+default: in-class,in-package
+protected: in-class,in-package,in-inherited
+public:everywhere
+
+继承方式只有一种：
+public:
+	public->public, protected->protected, default->default, private->不可见
+但是在子类中override父类函数的时候，不能减低可见度。
+
+在类中使用static的作用是bound to class other than to variable.

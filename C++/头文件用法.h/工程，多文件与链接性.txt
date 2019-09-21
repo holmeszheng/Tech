@@ -1,0 +1,4 @@
+每个cpp文件都是自包含自解释的。
+但是一个工程中的具有外部链接性的变量(static external)或者函数(自动static external)不能多次被多次定义。
+没有template和typename的虽然有<>的模板函数都是定义，与非模板函数和class相同，定于属于static external。
+只有带template<(typename)>才是模板声明，模板函数放在.h中可以多次被包含，不算定义算声明。

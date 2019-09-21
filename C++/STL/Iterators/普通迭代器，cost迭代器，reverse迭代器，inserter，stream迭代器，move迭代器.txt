@@ -1,0 +1,49 @@
+普通迭代器：
+	例如vector<int> vecInt;
+类型定义于vector<int>::iterator
+定义方式是vecInt.begin();vecInt.end();
+
+const 迭代器：
+类型定义于vector<int>::const_iterator
+定义方式是vecInt.cbegin();vecInt.cend();
+
+reverse 迭代器：
+类型定义于vector<int>::reverse_iterator
+定义方式是vecInt.rbegin(); vecInt.rend();
+
+const reverse 迭代器：
+类型定义于vector<int>::const_reverse_iterator
+定义方式是vecInt.crbegin(); vecInt.crend();
+
+inserter:
+ 	it=t　　在it指定的当前位置插入值t，假定c是it绑定的容器，依赖于插入迭代器的不同种类，此赋值分别调用c.push_back(t)、c.push_front(t)或c.insert(it,t),其中it为传递给inserter的迭代器位置。
+	*it,++it,it++　　这些操作虽然存在，但不会对it做任何事情，每个操作都返回it。
+back_inserter(vecInt);
+front_inserter(vecInt);
+inserter(vecInt, vecInt.begin());
+
+分别对应(sequential container 和 associative container的各种insert情况）(c为container对象，it为该container迭代器，value为其中元素类型）
+back_inserter: c.push_back(value)
+front_inserter: c.push_front(value)
+inserter: c.insert(it, vale)
+		insert的位置是该it位置前面，所以forward_list有insert_after和erase_after并使用before_begin()来得到iterator指向begin之前的位置。
+
+stream iterator:
+istream_iterator:要指定该迭代器从什么流读取和能读取的类型。
+istream_iterator<T> in(is); 　	in从输入流is读取类型为T的值
+istream_iterator<T> end;　　　	读取类型为T的值的istream_iterator迭代器，表所尾后位置
+in1==in2　　　　　　 in1和in2必须读取相同类型。如果它们都是尾后迭代器，或绑定到相同的输入，则两个相等
+in1!=in2
+*in　　　　　　　　　　　　　　返回从流中读取数据
+in->mem　　　　　　　　　　　　与(*in).mem的含义相同
+++in,in++　　　　　　　　　　　使用元素类型所定义的>>运算符从输入流中读取下一个值。与以往一样，前置版本返回一个指向递增后迭代器的引用，
+
+ostream_iterator:要指定写出到什么流，和能写的类型。
+ostream_iterator<T> out(os);　　　　　　out将类型为T的值写到输出流os中
+ostream_iterator<T> out(os,d);　　　　　out将类型为T的值写到输出流os中，每个值后面都输出一个d。d指向一个空字符串结尾的字符数组(char*)
+out=val(可以用*out=val更容易理解) 　　　用<<运算符将val写入到out所绑定的ostream中。val的类型必须与out可写的类型兼容
+*out,++out,out++　　　　　 　　　　　   这些运算符是存在的，但不对out做任何事情。每个运算符都返回out
+
+move iterator:
+make_move_iterator(normal iterator) 会返回move iterator。
+	区别是：*move_iterator是对象的右值引用，而*iterator是对象的左值引用（同样的是指针解引用，表达式等),类似于std::move(lvalue)返回该左值的右值引用。

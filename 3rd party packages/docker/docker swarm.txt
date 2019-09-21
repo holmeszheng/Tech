@@ -1,0 +1,73 @@
+docker swarm cluster
+
+Install docker-machine
+curl -L https://github.com/docker/machine/releases/download/v0.13.0/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine && \
+chmod +x /tmp/docker-machine && \
+sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
+
+1. Configure Swarm cluster:
+
+docker machine related:
+# Create two virtual machines with docker-machine
+docker-machine create --driver virtualbox myvm1
+docker-machine create --driver virtualbox myvm2
+
+# docker-machine ls
+	list machines and their IP address
+# docker-machine start <machine-name>
+	start a machine
+# docker-machine stop <machine-name>
+	stop a machine
+# docker-machine stop $(docker-machine ls -q)
+	stop all machines
+# docker-machine rm <machine-name>
+	remove a machine
+
+
+# docker swarm init 
+	enable swarm mode and make your current machine a swarm manager
+# docker swarm join
+	on other machines to have them join the swarm as workers.
+
+# use ssh to communite to other machines
+
+## docker-machine ssh myvm1 "docker swarm init --advertise-addr <myvm1 ip>"
+	ask machine myvm1 to be swarm manager
+
+##  docker swarm join \
+  --token <token> \
+  <myvm ip>:<port>
+  	ask other machines to join that swarm cluster
+
+## docker-machine ssh myvm1 "docker node ls"
+	on the manager to view nodes in the swarm
+
+# docker swarm leave
+	ask the node to leave current swarm
+
+# docker swarm leave --force
+	ask the manager to leave current swarm
+
+2. deploy app / stack on the swarm cluster
+	There are two ways. one is to configure your current shell to talk  to docker daemon on another machine, another is to copy the docker-compose.yml file to the swarm manager using scp and deploy there.
+
+(1) configures your current shell to talk to the Docker daemon on the VM
+	in current shell:
+	# docker-machine env <machine>   --> current shell will talk to docker daemon in <machine>, change that if needed.
+	# eval $(docker-machine env myvm1) (last command from the last command)
+	# eval $(docker-machine env -u)  --> disconnect current shell and the docker daemon in <machine>
+	# docker stack deploy -c docker-compose.yml getstartedlab
+
+(2) use ssh to communicate to other nodes
+	# docker-machine scp <file> <machine>:~ 
+		copy docker-compose.yml file to the swarm manager
+	# docker-machine ssh <machine> "docker stack deploy -c docker-compose.yml getstartedlab"
+		deploy the stack on the manager using the copyied docker-compose.yml file.
+
+Hit the IP of either node to test
+
+If you modify the service configuration docker-compose.yml or the app helloworld itself, just in-place update and re-deploy the stack
+	docker stack deploy -c docker-compose.yml getstartedlab
+
+# docker stack rm getstartedlab
+	delete the stack

@@ -1,0 +1,312 @@
+模板函数：（外面的模板函数，类的成员模板函数）
+
+general:(必须写在外域）
+template<typename T> 
+void swap(T &a, T &b){}
+
+声明：
+general：
+template<typename T>
+void swap(T&, T&);
+具体化的声明必须要在general的声明或者定义之后：
+template<>
+void swap(double&, double&);
+
+具体化：(必须写在外域）
+template<> 
+void swap<job>(job &a, job &b)   //显式具体化（上面已经讲过，注意与实例化区分开，必须有定义）
+{
+  int salary:
+  salary = a.salary:
+  a.salary = b.salary;
+  b.salary = salary;
+};//explicit specialization.
+	若是typename在parameters中显而易见，那么可以简化为：
+template<> 
+void swap(job &a, job &b)   //显式具体化（上面已经讲过，注意与实例化区分开，必须有定义）
+{
+  int salary:
+  salary = a.salary:
+  a.salary = b.salary;
+  b.salary = salary;
+};//explicit specialization.
+模板函数没有部分具体化，用函数重载代替。当一个模板具体化对应多个general（有重载）时会有二义性，应该用普通函数的重载来代替。
+
+实例化：
+显式用< >声明时生成实例函数：(必须写在外域）
+template void swap<int>(int &a, int & b);  //显式实例化，只需声明
+template void swap(int&, int&);
+template void swap<int>(int&, int&); 均可
+隐式在调用的时候生成实例函数：
+int i,j;
+swap<double>(i,j); （实例为template swap<double>(double, double))
+swap(i,j);(实例为template swap<int>(int, int))
+
+模板的重载：
+	模板函数的重载，类的成员函数的重载，类的成员模板函数的重载，涉及到选择策略。
+
+
+
+模板类：
+
+general:(必须写在外域）
+template <class T>
+class Arrary
+{
+private:
+  T* ar;
+  int l;
+...
+};//template class declaration.
+
+声明：
+general:
+template<typename T>
+class Array;
+具体化或者部分具体化的声明必须要在general的声明或者定义之后：
+general:template<>
+class Array<doulbe>;
+
+具体化:(必须写在外域）
+template<> class Array<job>
+{
+private:
+  job* ar;
+  int l;
+};//expicit specialization.   显式具体化，类定义体可以不同于类模板Array
+
+部分具体化:(必须写在外域）
+	general：
+	template<typename T, typename U> class Array{}
+	partial specialization:
+	template<typename T> class array<T, mpreal>{}
+	specialization:
+	template<> class array<double, int>{}
+
+实例化：
+显式实例化：(必须写在外域）
+template class Array<int>;   //explicit instantiation. 显式实例化	（声明的时候完成实例化)
+template class Array<hello, world>;
+template class Array<hello, mpreal>;
+template class Array<double, int>;
+隐式实例化：
+new Array<int>;  （调用的时候实例化）
+new Array<hello, world>;
+new Array<hello, mpreal>;
+new Array<double, int>;
+模板类没有重载！！！！！
+
+
+模板类和模板函数的声明（带template关键字的）都是声明，所以可以作为.h文件中的内容被多个.c文件引用，但是没有template关键字，有<>的类和函数的定义则等同于普通的函数或者类，是定义
+定义的四种属性：
+局部自动
+局部静态
+静态内部
+静态外部
+（namespace中的定义或者声明和外域::中的定义和声明在属性上没有区别，只是封装在了namespace::域中,用了using以后表示该名称在本空间可用，定义的产生和空间的分配在namespace中产生（不管using了与否））
+
+
+
+
+
+特殊的部分具体化：
+template <typename T> struct Op
+{} // This is general.YOU MIGHT NEED TO SPECIALIZE THIS TEMPLATE:
+template <>
+truct Op <mpreal> {}     //  SPECIALIZED TEMPLATE FOR mpreal class:
+template <typename U, unsigned int N> struct Op< FTypeName<U,N> >
+{} //still a specialized template from the general
+	
+
+
+在模板中 .    ->     :: 后面用到了模板的实例化的使用要用template关键字。 用到了别的模板中的依赖名字（其他模板中typedef的名字）的时候，要用typename。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+C++函数模板----模板实例化、具体化
+函数模板是C++新增的一种性质，它允许只定义一次函数的实现，即可使用不同类型的参数来调用该函数。这样可以减小代码的书写复杂度，同时也便于修改。
+mark:使用函数模板并不会减少最终可执行程序的大小，因为在调用模板函数时，编译器都根据调用时的参数类型进行形影的实例化。
+函数模板的使用过程：
+struct job
+{
+    char name[20];
+    int salary;
+};
+
+template <class T> //函数模板声明，通用变量类型为T
+void swap(T &a, T &b);
+
+void showJob(const job &a);//打印job内容
+
+using std::cin;
+using std::cout;
+using std::endl;
+void main(void)
+{
+
+    int a = 4;
+    int b = 5;
+    cout<<"Before swap a = "<<a<<" b="<<b<<endl;
+    swap(a, b);
+    cout<<"After swap a = "<<a<<" b="<<b<<endl;
+   
+    job jobA = {"coder", 10000};
+    job jobB = {"manager", 1000};  
+    cout<<"Before swap";
+    showJob(jobA);
+    showJob(jobB);
+    cout<<endl;
+    swap(jobA, jobB);
+    cout<<"After swap";
+    showJob(jobA);
+    showJob(jobB);
+    cout<<endl;
+system("pause");
+};
+
+template<class T> //函数模板实现
+void swap(T &a, T &b)
+{
+    T temp;
+    temp = a;
+    a = b;
+    b = temp;
+}
+
+void showJob(const job &a)
+{
+cout<<" "<<a.name<<" = "<<a.salary;
+}
+
+但是存在下列问题，我只想交换结构体中的一个成员变量，应该怎么处理？有下列几种方法：
+1，显式具体化
+显式具体化也是基于函数模板的，只不过在函数模板的基础上，添加一个专门针对特定类型的、实现方式不同的具体化函数。
+template<>void swap<job>(job &a, job &b)
+{
+     int salary;
+     salary = a.salary;
+     a.salary = b.salary;
+     b.salary = salary;
+}
+
+如上所示，该具体化函数的实现与模板并不一致，编译器解析函数调用时会选择最匹配的函数定义
+
+2，定义同名常规函数
+2>定义同名常规函数
+void swap(job &a, job &b)
+{
+     int salary;
+     salary = a.salary;
+     a.salary = b.salary;
+     b.salary = salary;
+}
+由于编译器在重载解析时，会选择最匹配函数定义，所以在调用swap(jobA, jobB)时，编译器会选择void swap(job &a, job &b)函数定义，而屏蔽了模板函数。
+
+同时，模板函数也可以重载，其操作与常规函数一致。
+template <class T> void swap(T &a, T &b);
+
+template <class T> void swap(T &a, T &b, T &c);
+
+template <typename T> void swap(T &a, T &b)
+{
+    T temp;
+    temp = a;
+    a = b;
+    b = temp;
+}
+
+template <typename T> void swap(T &a, T &b, T &c)
+{
+    T temp;
+    temp = a;
+    a = b;
+    b = c;
+    c = temp;
+}
+
+
+上面主要说的是函数模板的具体化，下面说下模板实例化。
+
+函数模板：
+#define MAXNAME 128
+struct job
+{
+char name[MAXNAME]:
+int salary;
+};
+
+template<class T>
+void swap(T &a, T &b )
+{
+  T temp;
+  temp = a;
+  a = b;
+  b = temp;
+};
+
+template void swap<int>(int &a, int & b);  //显式实例化，只需声明
+
+template<> void swap<job>(job &a, job &b)   //显式具体化（上面已经讲过，注意与实例化区分开，必须有定义）
+{
+  int salary:
+  salary = a.salary:
+  a.salary = b.salary;
+  b.salary = salary;
+};//explicite specialization.
+
+类模板：
+template <class T>
+class Arrary
+{
+private:
+  T* ar;
+  int l;
+...
+};//template class declaration.
+
+template class Array<int>;   //explicit instantiation. 显式实例化
+
+template<> class Array<job>
+{
+private:
+  job* ar;
+  int l;
+};//expicit specialization.   显式具体化，类定义体可以不同于类模板Array
+
+相应的，隐式实例化指的是：在使用模板之前，编译器不生成模板的声明和定义实例。只有当使用模板时，编译器才根据模板定义生成相应类型的实例。如：
+int i=0, j=1;
+swap(i, j);  //编译器根据参数i，j的类型隐式地生成swap<int>(int &a, int &b)的函数定义。
+Array<int> arVal;//编译器根据类型参数隐式地生成Array<int>类声明和类函数定义。
+
+显式实例化：
+当显式实例化模板时，在使用模板之前，编译器根据显式实例化指定的类型生成模板实例。如前面显示实例化（explicit instantiation）模板函数和模板类。其格式为：
+template typename function<typename>(argulist);
+template class classname<typename>;
+显式实例化只需声明，不需要重新定义。编译器根据模板实现实例声明和实例定义。
+
+显示具体化：
+对于某些特殊类型，可能不适合模板实现，需要重新定义实现，此时可以使用显示具体化（explicite specialization）。显示实例化需重新定义。格式为：
+template<> typename function<typename>(argu_list){...};
+template<> class classname<typename>{...};
+
+ 
+
+
+综上：
+template<> void swap<job>(job &a, job &b) {……};是函数模板的显式具体化，意思是job类型不适用于函数模板swap的定义，因此通过这个显式具体化重新定义；也可简写作template<> void swap(job &a, job &b);
+template void swap<job>(job &a, job &b);是函数模板的一个显式实例化，只需声明，编译器遇到这种显式实例化，会根据原模板的定义及该声明直接生成一个实例函数，该函数仅接受job型。否则编译器遇到模板的使用时才会隐式的生成相应的实例函数。 
