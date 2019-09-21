@@ -1,0 +1,16 @@
+(1) for java 11
+Extract java-11.0.1 to /usr or wherever you want
+	tar -zxvf jdk-*
+	
+In .bashrc, add system path for java
+	export PATH=$PATH:/usr/jdk-11.0.1/bin
+	export JAVA_HOME=/usr/jdk-11.0.1
+	export J2SDKDIR=/usr/jdk-11.0.1
+	
+(2) for java 8
+In .bashrc, add system path for java
+	export PATH=$PATH:/usr/jdk1.8.0_191/bin
+	export JAVA_HOME=/usr/jdk1.8.0_191
+	export JRE_HOME=/usr/jdk1.8.0_191/jre/
+	export J2SDKDIR=/usr/jdk1.8.0_191
+	export J2REDIR=/usr/jdk1.8.0_191/jre

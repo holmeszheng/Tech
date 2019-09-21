@@ -1,0 +1,8 @@
+# Insert spaces for tabs
+java code style -> formatter -> edit -> indentation -> tab policy (Spaces only)
+
+# show print marjin and whitespace characters
+General -> Text Editors
+
+# format on save
+Java -> Editor -> Save Actions -> Perform the selected actions on save & Organize imports

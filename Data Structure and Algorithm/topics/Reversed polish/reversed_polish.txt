@@ -1,0 +1,177 @@
+Reversed polish expression
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <stack>
+using std::cout;
+using std::cin;
+using std::endl;
+using std::stack;
+using std::string;
+
+int priority(char c) {
+    switch (c)
+    {
+    case '+':
+        return 1;
+    case '-':
+        return 1;
+    case '*':
+        return 2;
+    case '/':
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+template<class T> string printStack(stack<T> stack) {
+    string result = "";
+    while (!stack.empty())
+    {
+        result = stack.top()+result;
+        stack.pop();
+    }
+    return result;
+}
+
+string reversePolish(string inputStr) {
+    stack<char> polish;
+    stack<char> op;
+    bool lastNumber = false;
+    for(int i = 0; i<inputStr.length();i++)
+    {
+        char curChar = inputStr[i];
+        //that digit is a number
+        if(curChar>='0'&&curChar<='9')
+        {
+            if(!lastNumber)
+            {
+                polish.push(' ');
+                polish.push(curChar);
+            }
+            else
+                polish.push(curChar);
+
+            lastNumber=true;
+            continue;
+        }
+        //that digit is a operator
+        else
+        {
+            lastNumber = false;
+            //if op is empty or curChar is '(', just push it into op stack
+            if(curChar == '('||op.empty())
+            {
+                op.push(curChar);
+                continue;
+            }
+            //if ')', pop until top of op stack is '('
+            else if(curChar == ')')
+            {
+                while(op.top()!='(')
+                {
+                    polish.push(op.top());
+                    op.pop();
+                }
+                op.pop(); //pop '('
+            }
+            else if(priority(curChar)>=priority(op.top()))
+            {
+                op.push(curChar);
+            }
+            else if(priority(curChar)<priority(op.top()))
+            {
+                while(!op.empty())
+                {
+                    polish.push(op.top());
+                    op.pop();
+                    if(priority(curChar)>=priority(op.top()))
+                    {
+                        break;
+                    }
+                    else if(op.top()=='(')
+                    {
+                        break;
+                    }
+                }
+                op.push(curChar);
+            }
+        }
+    }
+    while(!op.empty())
+    {
+        polish.push(op.top());
+        op.pop();
+    }
+
+    return printStack(polish);
+}
+
+//opA is the left operand, opB is the right operand.
+int simpleCalculate(int opA, int opB, char op) {
+    switch (op)
+    {
+    case '+':
+        return opA + opB;
+    case '-':
+        return opA - opB;
+    case '*':
+        return opA * opB;
+    case '/':
+        return opA / opB;
+    default:
+        return 0;
+    }
+}
+
+//计算表达式的值
+int calculate(string polish) {
+    stack<int> values;
+    bool lastIsNum = false;
+    for (int i = 0; i < polish.length(); i++) {
+        char c = polish.at(i);
+        //if that is a number
+        if (c == ' ') {
+            lastIsNum = false;
+            continue;
+        }
+        else if (c >= '0'&&c <= '9') {
+            if (!lastIsNum) {
+                values.push(c - '0');
+                lastIsNum = true;
+            }
+            else {
+                int last = values.top();
+                values.pop();
+                last = last * 10 + (c - '0');
+                values.push(last);
+            }
+        }
+        //if that is an op
+        else {
+            lastIsNum = false;
+            int opB = values.top();
+            values.pop();
+            int opA = values.top();
+            values.pop();
+            int calResult = simpleCalculate(opA, opB, c);
+            values.push(calResult);
+        }
+    }
+    return values.top();
+}
+
+int main()
+{
+    string str;
+    cout << "请输入表达式: ";
+    cin >> str;
+    string result = reversePolish(str);
+    cout << result << endl;
+    int calResult = calculate(result);
+    cout << "计算结果: " << calResult << endl;
+    system("pause");
+    return 0;
+}

@@ -1,0 +1,10 @@
+chgrp [-R][groupName] fileName
+chwon [-R][userName]:[groupName] fileName
+(1)chmod [-R] number fileName
+	r: 4 w: 2 x: 1
+	To set -rwx-rw-x -> chmode 761 fileName
+	
+(2) chmod u/g/o/a	+/-/=	r/w/x fileName
+		separated by ,
+	chmod u=rwx,go=rx .bashrc
+	chmod u+x,g-w,o+r .bashrc

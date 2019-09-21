@@ -1,0 +1,20 @@
+head	0	1	2	3	4
+head	p1	p2	p3
+head		p1	p2	p3
+
+ÓĞhead½Úµã
+p1=head->next;
+p2=p1->next;
+if(p2==NULL)
+	return p1;
+p3 = p2->next;
+p1->next =NULL;
+p2->next = p1;
+while(p3!=NULL)
+{
+	p1=p2;
+	p2=p3;
+	p3 = p3->next;
+	p2->next = p1;
+}
+return p2;

@@ -1,0 +1,50 @@
+version1: 找出一个数组中一个只出现一次的数字，其他数字都出现两次：将所有数字异或，得到的结果即为只出现一次的。
+
+version2: 找出一个数组中两个只出现一次的数字，其他数字都出现两次：将所有数字异或，得到的结果即为x=a^b, index为x中第一个为1的位，则a 和b中第index为必然有一个为1，有一个为0。据此将所有数据分为两组，一组的第index为都为1，另一组第index为都为0，第一组数字异或得到a，第二组数字异或得到b.
+时间复杂度为o(n),空间复杂度为o(1)。
+	int discriminator = x&~(x-1); //仅保留最后一位是1 
+
+version3:找出一个数组中三个只出现一次的数字，其他数字都出现两次：将所有数字异或，得到的结果为x=a^b^c。x必然与a,b,c都不相同，因此x^a,x^b,x^c都不为0. 
+定义函数f(n)，作用是保留数字n的二进制表示中最后一位1，而其他位都变为0. 则f(x^a),f(x^b),f(x^c)的结果均不为0.
+考虑f(x^a)^f(x^b)^f(x^c)的结果，它肯定不为0。因为对于三个非零的数i,j,k, f(i)^f(j)的结果要么为0，要么结果的二进制结果中有两个是1，而f(k)的结果中只有一位是1，所以f(i)^f(j)^f(k)一定不为0。 
+因此f(x^a)^f(x^b)^f(x^c)至少有一位为1，假设最后一位是1的位为第 m 位。那么x^a, x^b, x^c的结果中，有一个或者三个数字的第m位是1.
+下面证明不可能三个结果的第m位都是1. 反证法证明：若x^a，x^b， x^c的第m位都是1，则a,b,c的第m位都和x的第m位相反，那么a,b,c的第m位相同。若都为0，则x=a^b^c的第m为也未0，与x的第m位与a,b,c第m位相反矛盾；同样若都为1，则x第m位为1，与假设矛盾。因此a,b,c中只有一个数字的第m位为1。 于是我们找到了区分a,b,c三个数字的标准。一旦将第m位为1的数找出来之后，另外两个数字也可以找出来了。
+ 
+version4: 一个无序数组中有1001个数，由1—1000组成，仅有一个数出现了2次，求这个数字。
+	设这个数是A，其它999个数是B。则数组所有元素XOR的结果为A^A^B。1000个数XOR的结果为A^B,一起XOR的结果为A。
+
+version5: 一个数组中除了一个数字出现一次外，其他数字都出现了三次，找出只出现了一次的数字。
+思路：若数组中没有x，则其他所有数字都出现了三次，那么所有数字的二进制表示的每一位相加都应该可以被3整除，如果某一位不能，则表明x在这一位上是1。 这种解决方案可以扩展到其他所有数字都出现了N次的情形。
+代码：
+// 【白话经典算法系列之十七】<span >数组中只出现一次的数</span>
+// by MoreWindows( http://blog.csdn.net/MoreWindows )
+// 欢迎关注http://weibo.com/morewindows
+#include <stdio.h>
+#include <string.h>
+int FindNumber(int a[], int n)
+{
+int bits[32];
+int i, j;
+// 累加数组中所有数字的二进制位
+memset(bits, 0, 32 * sizeof(int));
+for (i = 0; i < n; i++)
+for (j = 0; j < 32; j++)
+bits[j] += ((a[i] >> j) & 1);
+// 如果某位上的结果不能被整除，则肯定目标数字在这一位上为
+int result = 0;
+for (j = 0; j < 32; j++)
+if (bits[j] % 3 != 0)
+result += (1 << j);
+return result;
+}
+int main()
+{
+printf(" 【白话经典算法系列之十七】数组中只出现一次的数\n");
+printf(" -- by MoreWindows( http://blog.csdn.net/MoreWindows ) --\n");
+printf(" -- http://blog.csdn.net/morewindows/article/details/12684497 -- \n\n");
+ 
+const int MAXN = 10;
+int a[MAXN] = {2, 3, 1, 2, 3, 4, 1, 2, 3, 1};
+printf("%d\n", FindNumber(a, MAXN));
+return 0;
+}

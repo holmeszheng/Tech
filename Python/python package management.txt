@@ -1,0 +1,13 @@
+have limit.h
+apt install musl-dev
+
+sudo apt install python3-dev
+
+pip3 install wheel
+
+make sure you have latest setuptools and pip by 
+pip install -U pip setuptools
+
+
+dis-packages -> python packages installed by apt
+site-packages -> python packages installed by pip3

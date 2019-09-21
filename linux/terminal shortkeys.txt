@@ -1,0 +1,4 @@
+ctrl + alt + T: open a new terminal
+ctrl + shift + T: open a new tab in the existing terminal
+ctrl + shift + w: close current tab
+ctrl + pageUp/ pageDown: switch tabs

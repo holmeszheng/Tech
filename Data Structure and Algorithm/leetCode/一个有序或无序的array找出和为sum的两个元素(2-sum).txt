@@ -1,0 +1,16 @@
+1.有序数组：
+	0 1 2 3 4 5 6 7 8 9
+	p1                p2
+p1指向小的那个数，初始在数组最左边，p2指向大的那个数，初始在数组最右边。
+当p1+p2>sum时, p2向左移动
+当p1+p2<sum时，p1向右移动
+当p1==p2是，没有找到
+time complexity O(n）
+
+2.无序数组：
+	假设hashtable无collision，访问一个元素的时间是O(1)
+一个指针p1，从左向右遍历。
+遇到一个数ele，将查找sum-ele是否在hashtable中
+如果不在，则将(ele,index)加入hashtable中
+如果在，程序结束，直到遍历到末尾
+time complexity O(n)

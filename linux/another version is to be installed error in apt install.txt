@@ -1,0 +1,18 @@
+﻿ubuntu apt-get install 时报错：Depends: ***(=某版本)but***(另一版本)is to be installed
+
+这时候就把这个***给purge后再重新装就好了
+
+比如:
+
+apt-get purge libcurl4
+
+apt-get install curl
+
+或者:
+
+apt-get purge vim-common
+
+apt-get install vim
+
+
+apt-get is deprecated, use apt instead.

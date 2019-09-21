@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <iterator>
+#include <sstream>
+using namespace std;
+bool checkDuplicate(vector<string> &vString, string s);
+std::vector<std::string> split(std::string const &input);
+vector<string> split2(const string &input);
+void showFile(ifstream &inFile, ostream &outFile);
+int main()
+{
+    string filename = "requests.txt";
+    ifstream infile(filename);
+    ofstream outfile("gifs_"+filename);
+    vector<string> results;
+    string aRow;
+
+    while(!infile.eof())
+    {
+        getline(infile, aRow);
+        vector<string> splitors = split2(aRow);
+        if(splitors[2]=="200")
+        {
+            int n= aRow.rfind(".gif", n);
+//            int l = n;
+//            while(aRow[l]!='/')
+//                l--;
+            int l = aRow.rfind("/");
+            string result = aRow.substr(l+1, n-l+3);
+
+            if(!checkDuplicate(results, result))
+            {
+                results.push_back(result);
+            }
+        }
+    }
+    for(string it: results)
+    {
+        outfile<<it<<endl;
+    }
+    infile.close();
+    outfile.close();
+    showFile(infile,cout);
+    cout<<"finished"<<endl;
+
+}
+bool checkDuplicate(vector<string> &vString, string s)
+{
+    for(string &it : vString)
+    {
+        if(it == s)
+            return true;
+    }
+    return false;
+
+}
+vector<string> split2(const string &input)
+{
+    stringstream buffer(input);
+    vector<string> results;
+    while(!buffer.eof())
+    {
+        string aWord;
+        buffer>>aWord;
+        results.push_back(aWord);
+    }
+    return results;
+
+}
+std::vector<std::string> split(const std::string &input) {
+    std::istringstream buffer(input);
+    std::vector<std::string> ret;
+
+    std::copy(std::istream_iterator<std::string>(buffer),
+              std::istream_iterator<std::string>(),
+              std::back_inserter(ret));
+    return ret;
+}
+void showFile(ifstream &inFile, ostream &outFile)
+{
+    copy(istream_iterator<string>(inFile),istream_iterator<string>(),ostream_iterator<string>(outFile," "));
+
+}

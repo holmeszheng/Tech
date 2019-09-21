@@ -1,0 +1,41 @@
+单向链表首先要有表头节点(没有数据域，只有指针域）：
+然后新创建的node位于head->next,temp = head->next; temp->next=NULL;
+然后新创建的节点还是位于head->next;temp1 = head->next; temp1->next= temp;
+同理，双向链表也是把每个节点加在头节点正后面！
+
+所以要把头结点head想象成与后面的链脱离的头，所有的新节点都插在head后面(head->next)，这类似于C++ stl中的forward_list 的before_begin()的iteratord。插入是一种LIFO（last in first out结构）
+
+出单链表的时候，每次出的都是head后面的那个node（head->next),然后head->next为出来的那个节点后面的node，直到NULL。
+
+void makeNodes(Node* &head, int n)
+{
+    try
+    {
+        if(n<=0)
+            throw runtime_error("kidding me!");
+    }
+    catch(exception &err)
+    {
+        cout<<err.what()<<endl;
+    }
+    head->next = new Node();
+    Node *temp = head->next;
+    temp->next = NULL;
+    for(int i=1; i<n; i++)
+    {
+        temp->data = rand();
+        head->next = new Node();
+        head->next->next = temp;
+        temp = head->next;
+    }
+    temp->data = rand();
+}
+void traverseNodes(Node* head)
+{
+    int i = 0;
+    for(Node *cur = head->next; cur!=NULL; cur=cur->next)
+    {
+        cout<<i<<" th:  "<<cur->data<<endl;
+        i++;
+    }
+}

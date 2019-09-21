@@ -1,0 +1,43 @@
+# customize path
+# java 11
+export PATH=$PATH:/usr/lib/java/jdk-11.0.4/bin
+export JAVA_HOME=/usr/lib/java/jdk-11.0.4
+export J2SDKDIR=/usr/lib/java/jdk-11.0.4
+# java 8
+#export PATH=$PATH:/usr/lib/java/jdk1.8.0_221/bin
+#export JAVA_HOME=/usr/lib/java/jdk1.8.0_221
+#export JRE_HOME=/usr/lib/java/jdk1.8.0_221/jre/
+#export J2SDKDIR=/usr/lib/java/jdk1.8.0_221
+#export J2REDIR=/usr/lib/java/jdk1.8.0_221/jre
+
+# idea IntelliJ
+export PATH=$PATH:/usr/lib/idea-IC-192.6603.28/bin
+alias intelliJ=idea.sh
+
+# notepadqq
+export PATH=$PATH:/snap/bin
+alias notepad=notepadqq
+
+# eclipse
+export PATH=$PATH:/home/eric/eclipse/java-2019-06/eclipse
+
+# smartgit
+export PATH=$PATH:/home/eric/Software/smartgit/bin
+alias smartgit=smartgit.sh
+
+# pycharm
+export PATH=$PATH:/home/eric/Software/pycharm-community-2019.2.2/bin
+alias pycharm=pycharm.sh
+
+# 3rd party packages
+export PATH=$PATH:/usr/local/lib/python3.6/dist-packages:/home/eric/.local/bin
+
+# airflow_home
+export AIRFLOW_HOME=~/airflow
+
+# snap apps
+export PATH=$PATH:/snap/bin
+
+# sublime text
+export PATH=$PATH:/opt/sublime_text
+alias sublime=sublime_text

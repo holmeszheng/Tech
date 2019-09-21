@@ -1,0 +1,68 @@
+(1) locate "exactFileName"
+(2) find position [options] pattern
+	eg: find . -name "java*"
+
+(3) grep [options] pattern files
+		Text search tool in text files in linux
+
+(4) which javac
+	find where this command is from
+(5) echo $PATH
+(6) export $PATH=$PATH:/usr/java-11.0.1/bin
+		like define
+	echo $Java_HOME will show defined $variables 
+(7) aliases could be added into .bashrc like
+	alias la='ls -A'
+	alias ll='ls -alF'
+	alias ls='ls --color=auto'
+	
+	alias will also show all the aliases in current environment.
+	
+(8) go to /etc/apt/sources.list.d to check all ppa added.
+
+(9) go to /etc/environment to add network proxy. They way through GUI not reliable.
+	This is the system network proxy setting which will be retrieved in multiple places like
+		a. in smartgit auto-detect system proxy
+		b. in eclipse, native network proxy configuration
+(10)
+	顺序执行多条命令：command1;command2;command3;
+		简单的顺序指令可以通过 ;来实现
+	有条件的执行多条命令：which command1 && command2 || command3
+		&& : 如果前一条命令执行成功则执行下一条命令，如果command1执行成功（返回0）,则执行command2
+		|| :与&&命令相反，执行不成功时执行这个命令
+	$?: 存储上一次命令的返回结果
+		echo $?
+	| piping symbol 管道命令必须要能够接受来自前一个命令的数据成为standard input继续处理才行。
+		ls -al /etc | less
+		more .bashrc | grep 'eclipse'
+		
+(11) more, less, cat.
+	cat will dump all content of the file into the terminal
+	more will dump into terminal but to fit the screen size
+	less will have it detached.
+	
+	enter : next line
+	space : page down
+	page up
+	
+(12) touch
+		modify the timestamp of a file. Create one if it doesn't exist.
+	echo "hello world" >> newfile.txt
+		append the standard out into a (new/ existing) file
+	viem / gedit ... newfile.txt and save.
+	
+(13)
+	jobs
+		show current running jobs
+	ps [options]
+		show process
+	kill [signal] pid
+	fg move
+		a job to foreground
+	bg move
+		a job to background and keep running
+	Ctrl + z
+		stop current process
+	gedit &
+		run a command in background
+

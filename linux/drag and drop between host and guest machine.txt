@@ -1,0 +1,34 @@
+﻿1. In guest machine (Ubuntu), make sure sshd is installeld and service on.
+ (1) 安装ssh
+
+命令为：sudo apt-get install openssh-server
+
+ (2) 启动ssh服务和确认
+
+启动命令为：sudo /etc/init.d/ssh start 
+
+确认ssh服务启动：ps -e | grep ssh
+
+2. In virtualbox, add host-only network
+	(use DHCP or static ip for the virtual machine)
+
+3. check the ip address in virtual machine through (ifconfig, find that adapter, inet)
+	check portal status:
+	eric@eric-VirtualBox:~/Documents$ netstat -ntl
+	Active Internet connections (only servers)
+	Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+	tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN     
+	tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     
+	tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN     
+	tcp6       0      0 :::22                   :::*                    LISTEN     
+	tcp6       0      0 ::1:631                 :::*                    LISTEN     
+
+4. in winscp
+	File protocol: SFTP
+	Host name: ip address in virtual machine
+	port number: 22 for ssh by default
+	user name: eric
+	password: login password
+
+	
+
