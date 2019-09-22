@@ -1,0 +1,212 @@
+1. Assign Memory Resources to Containers and Pods
+
+# define a pod
+	memory-request-limit.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-demo
+  namespace: mem-example  (just ike C++ namespace)
+spec:
+  containers:
+  - name: memory-demo-ctr
+    image: polinux/stress
+    resources:
+      limits:
+        memory: "200Mi"	(used for pod termination)
+      requests:
+        memory: "100Mi" (used for pod scheduling)
+    command: ["stress"]
+    args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
+
+The args section in the configuration file provides arguments for the Container when it starts. The "--vm-bytes", "150M" arguments tell the Container to attempt to allocate 150 MiB of memory.
+
+# create a namespace:
+kubectl create namespace mem-example
+
+# Create the Pod:
+kubectl apply -f https://k8s.io/examples/pods/resource/memory-request-limit.yaml (pod definition file)
+
+## Verify that the Pod Container is running:
+kubectl get pod memory-demo --namespace=mem-example
+
+## View detailed information about the Pod:
+kubectl get pod memory-demo --output=yaml --namespace=mem-example
+kubectl describe pod memory-demo-2 --namespace=mem-example
+
+# delete a pod
+kubectl delete pod memory-demo --namespace=mem-example
+
+# delete a namespace
+kubectl delete namespace mem-example
+
+2. Assign CPU Resources to Containers and Pods
+cpu-request-limit.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-demo
+  namespace: cpu-example
+spec:
+  containers:
+  - name: cpu-demo-ctr
+    image: vish/stress
+    resources:
+      limits:
+        cpu: "1"
+      requests:
+        cpu: "0.5"
+    args:
+    - -cpus
+    - "2"
+
+  PS:  The args section of the configuration file provides arguments for the container when it starts. The -cpus "2" argument tells the Container to attempt to use 2 CPUs.
+
+3. Quality of service (QoS) of a pod
+Kubernetes uses QoS classes to make decisions about scheduling and evicting Pods.
+
+QoS classes:
+When Kubernetes creates a Pod it assigns one of these QoS classes to the Pod:
+Guaranteed :
+  # Every Container in the Pod must have a memory limit and a memory request, and they must be the same.
+  # Every Container in the Pod must have a CPU limit and a CPU request, and they must be the same.
+Burstable:
+  # The Pod does not meet the criteria for QoS class Guaranteed.
+  # At least one Container in the Pod has a memory or CPU request.
+BestEffort:
+  # The Containers in the Pod must not have any memory or CPU limits or requests.
+
+4. Other than cpu or memory, other resources could also be requested or limited:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: extended-resource-demo-2
+spec:
+  containers:
+  - name: extended-resource-demo-2-ctr
+    image: nginx
+    resources:
+      requests:
+        example.com/dongle: 2
+      limits:
+        example.com/dongle: 2
+
+5. Configure a Pod to Use a Volume for Storage
+  redis.yaml:
+apiVersion: v1
+kind: Pod (what this configuration is for)
+metadata:
+  name: redis (pod name)
+spec:
+  containers:
+  - name: redis (container name)
+    image: redis
+    volumeMounts:
+    - name: redis-storage
+      mountPath: /data/redis
+  volumes:
+  - name: redis-storage
+    emptyDir: {}
+# connect to a running container directly
+kubectl exec <container-name> <command>
+kubectl exec -it redis -- /bin/bash (go to the container shell)
+  PS: This Pod has a Volume of type emptyDir that lasts for the life of the Pod, even if the Container terminates and restarts.
+
+6.Configure a Pod to Use a PersistentVolume for Storage
+## Open a shell to the Node in your cluster. How you open a shell depends on how you set up your cluster.
+
+  pv-volume.yaml:
+apiVersion: v1
+kind: PersistentVolume (this is a persistent volume)
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath: (this indicates the path of the persistent volume on the node)
+    path: "/mnt/data"
+
+ps:The configuration file specifies that
+  1.the volume is at /mnt/data on the cluster’s Node.
+  2.specifies a size of 10 gibibytes
+  3.access mode of ReadWriteOnce, which means the volume can be mounted as read-write by a single Node. 
+  4.the StorageClass name manual for the PersistentVolume, which will be used to bind PersistentVolumeClaim requests to this PersistentVolume.
+  5. Kubernetes supports hostPath for development and testing on a single-node cluster. A hostPath PersistentVolume uses a file or directory on the Node to emulate network-attached storage.
+
+# Create the PersistentVolume:
+
+kubectl apply -f https://k8s.io/examples/pods/storage/pv-volume.yaml
+
+# View information about the PersistentVolume:
+
+kubectl get pv task-pv-volume
+  status -> available
+# Create a PersistentVolumeClaim
+Pods use PersistentVolumeClaims to request physical storage
+
+  pv-claim.yaml:
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+
+ps:create a PersistentVolumeClaim that requests a volume of at least three gibibytes that can provide read-write access for at least one Node.
+
+# Create the PersistentVolumeClaim:
+kubectl apply -f https://k8s.io/examples/pods/storage/pv-claim.yaml
+  status -> bound
+
+# Look at the PersistentVolumeClaim:
+
+kubectl get pvc task-pv-claim
+
+# create a Pod that uses your PersistentVolumeClaim as a volume.
+
+  pv-pod.yaml:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task-pv-pod
+spec:
+  volumes: (the volumes in this pod)
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: task-pv-claim (From the Pod’s point of view, the claim is a volume)
+  containers:
+    - name: task-pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html" (The persistent volume in the node is mounted here)
+          name: task-pv-storage
+
+# Access control
+Storage configured with a group ID (GID) allows writing only by Pods using the same GID. Mismatched or missing GIDs cause permission denied errors. To reduce the need for coordination with users, an administrator can annotate a PersistentVolume with a GID. Then the GID is automatically added to any Pod that uses the PersistentVolume.
+
+Use the pv.beta.kubernetes.io/gid annotation as follows:
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv1
+  annotations:
+    pv.beta.kubernetes.io/gid: "1234"
+
+When a Pod consumes a PersistentVolume that has a GID annotation, the annotated GID is applied to all Containers in the Pod in the same way that GIDs specified in the Pod’s security context are. Every GID, whether it originates from a PersistentVolume annotation or the Pod’s specification, is applied to the first process run in each Container.
+
+Note: When a Pod consumes a PersistentVolume, the GIDs associated with the PersistentVolume are not present on the Pod resource itself.

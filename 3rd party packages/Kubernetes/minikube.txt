@@ -1,0 +1,63 @@
+# how to install Minikube, a tool that runs a single-node Kubernetes cluster in a virtual machine on your personal computer.
+ 
+## Install a Hypervisor
+If you do not already have a hypervisor installed, install one of these now:
+
+• VirtualBox
+
+
+## Install Minikube via direct download
+If you’re not installing via a package, you can download a stand-alone binary and use that.
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+  && chmod +x minikube
+Here’s an easy way to add the Minikube executable to your path:
+
+sudo install minikube /usr/local/bin
+
+
+## Start the local Minikube cluster:
+ This command creates and configures a Virtual Machine that runs a single-node Kubernetes cluster. This command also configures your kubectl at ~/.kube/config to communicate with this cluster.
+minikube start
+
+## Delete the local Minikube cluster:
+minikube delete
+
+## Stop the local Minikube cluster:
+minikube stop
+
+
+## cluster configuration
+kubelet -> in each node
+apiserver
+proxy
+controller-manager
+etcd -> in manager
+scheduler
+
+eg: 
+To change the MaxPods setting to 5 on the Kubelet, pass this flag:
+minikube start --extra-config=kubelet.MaxPods=5
+
+To change the LeaderElection.LeaderElect setting to true on the scheduler, pass this flag: --extra-config=scheduler.LeaderElection.LeaderElect=true.
+minikube --extra-config=scheduler.LeaderElection.LeaderElect=true
+
+## cluster context
+	In ~/.kube/config, more than one cluster context could be configured like the kubectl context called “minikube”.
+	
+	To let kubectl connect to minikube cluster, run:
+	kubectl config use-context minikube
+	
+	Or pass the context on each command like this: kubectl get pods --context=minikube
+	
+## minikube specific cluster exploration:
+### minikube dashboard
+### To access a Service exposed via a NodePort, run this command in a shell after starting Minikube to get the address:
+	minikube service [-n NAMESPACE] [--url] NAME
+
+## Access service exposed IP
+### type:LoadBalancer -> exteranl IP provided
+### type:NodePort ->
+	kubectl get nodes -> node IP (exposed to host)
+	kubectl describe service/<service-name> node port here
+		or kubectl get service <service-name> --output='jsonpath="{.spec.ports[0].nodePort}"'

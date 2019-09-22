@@ -1,0 +1,64 @@
+Kubernetes ETCD:
+	Kubernetes uses etcd to store all its data – its configuration data, its state, and its metadata. Kubernetes is a distributed system, so it needs a distributed data store like etcd. etcd lets any of the nodes in the Kubernetes cluster read and write data.
+
+# get info
+kubectl cluster-info
+kubectl get nodes -o wide
+	narrow it down:
+		kubectl get nodes/<node-name> -o wide
+kubectl get deployments -o wide
+	narrow it down:
+		kubectl get deployments/<deployment-name> -o wide
+kubectl get services -o wide
+	narrow it down using labels:
+		kubectl get services -l run=kubernetes-bootcamp
+kubectl get pods -o wide
+	narrow it down using labels:
+		kubectl get pods -l run=kubernetes-bootcamp
+# get description
+kubectl describe nodes
+kubectl describe deployments
+	narrow it down:
+		kubectl describe deployments/<deployment-name>
+kubectl describe services
+	narrow it down using labels:
+		kubectl describe services -l run=kubernetes-bootcamp
+kubectl describe pods
+	narrow it down using labels:
+		kubectl describe pods -l run=kubernetes-bootcamp
+
+# create a deployment
+kubectl run <depoyment-name> --image=<image-location> --port=<container-port>
+kubectl run kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --port=8080
+
+8080 is the port exposed by the pod/container
+
+# directly accessing the REST API, create a proxy
+kubectl proxy --port=8001 -> runs kubectl in a mode where it acts as a reverse proxy
+like the cluster ip is now localhost:8001
+curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+
+# connect to a pod's shell
+## kubectl logs <pod-name>
+## kubectl exec <pod-name> env
+## kubectl exec -ti <pod-name> bash -> this will enter the pod terminal
+
+# create a service
+kubectl expose deployment/<deployment-name> --type="NodePort" --port <service-port>
+
+# add label to a pod /service
+kubectl label pod <pod-name> app=v1
+kubectl label service <service-name> app=v1
+
+# delete a service
+kubectl delete service -l <label key=value>
+
+# scale up a deployment:
+kubectl scale deployments/kubernetes-bootcamp --replicas=4
+
+# update the image used in container
+kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+
+# roll back to previous version
+kubectl rollout status deployments/kubernetes-bootcamp
+

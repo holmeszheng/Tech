@@ -1,0 +1,8 @@
+# get nodes
+kubectl get node
+kubectl get node <node-name>
+
+# get node details
+
+kubectl describte node
+kubectl describte node <node-name>
